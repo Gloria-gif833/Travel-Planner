@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 前端 (Nginx + SPA)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - travel-planner-net
+
+  # 后端 (Express API)
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - CORS_ORIGIN=http://localhost
+      - DATABASE_URL=file:./prisma/dev.db
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+    volumes:
+      - backend-data:/app/prisma  # SQLite 数据持久化
+      - backend-uploads:/app/uploads
+    networks:
+      - travel-planner-net
+
+  # 生产环境建议使用 PostgreSQL (可选)
+  # postgres:
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_DB: travel_planner
+  #     POSTGRES_USER: travel_planner
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - travel-planner-net
+
+networks:
+  travel-planner-net:
+
+volumes:
+  backend-data:
+  backend-uploads:
+  # postgres-data:

@@ -1,0 +1,35 @@
+/* ========================================
+   导出格式选择器样式
+   ======================================== */
+
+.selector {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.button {
+  padding: var(--space-sm) var(--space-xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+}
+
+.button:hover {
+  border-color: var(--color-gray-400);
+  color: var(--color-gray-900);
+}
+
+.active {
+  background: var(--color-accent) !important;
+  color: var(--color-white) !important;
+  border-color: var(--color-accent) !important;
+}
+
+.active:hover {
+  background: var(--color-accent-hover) !important;
+}

@@ -1,0 +1,52 @@
+/* ========================================
+   文本粘贴区样式
+   ======================================== */
+
+.pasteArea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-white);
+  resize: vertical;
+  min-height: 100px;
+  line-height: var(--line-height-relaxed);
+  transition: border-color var(--transition-fast);
+}
+
+.textarea:focus {
+  border-color: var(--color-primary) !important;
+}
+
+.textarea::placeholder {
+  color: var(--color-gray-300);
+  white-space: pre-wrap;
+}
+
+.addButton {
+  align-self: flex-end;
+  padding: var(--space-sm) var(--space-2xl);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  transition: background var(--transition-fast);
+}
+
+.addButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.addButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

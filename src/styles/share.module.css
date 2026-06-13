@@ -1,0 +1,208 @@
+/* ========================================
+   分享链接页面样式
+   ======================================== */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ---- 居中卡片 ---- */
+
+.card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-4xl) var(--space-3xl);
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+/* ---- 成功图标 ---- */
+
+.successIcon {
+  font-size: 64px;
+  margin-bottom: var(--space-lg);
+  display: block;
+}
+
+/* ---- 标题 ---- */
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-sm);
+}
+
+.subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-2xl);
+}
+
+/* ---- 链接框 ---- */
+
+.linkBox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-2xl);
+  text-align: left;
+}
+
+.linkText {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-900);
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: all;
+}
+
+.copyButton {
+  padding: var(--space-xs) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  white-space: nowrap;
+}
+
+.copyIdle {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.copyIdle:hover {
+  background: var(--color-accent-hover);
+}
+
+.copySuccess {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+/* ---- 标签列表 ---- */
+
+.tags {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-3xl);
+}
+
+.tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.tagIcon {
+  font-size: 24px;
+}
+
+/* ---- 操作按钮 ---- */
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.actionButton {
+  padding: var(--space-sm) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.primaryButton {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent);
+}
+
+.primaryButton:hover {
+  background: var(--color-accent-hover);
+}
+
+.secondaryButton {
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+}
+
+.secondaryButton:hover {
+  border-color: var(--color-gray-500);
+  color: var(--color-gray-900);
+}
+
+/* ---- 加载状态 ---- */
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-4xl) 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-accent);
+  border-radius: var(--radius-round);
+  animation: spin 0.8s linear infinite;
+}
+
+.loadingText {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+}
+
+/* ---- 错误 ---- */
+
+.errorText {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  margin-bottom: var(--space-lg);
+}
+
+.retryButton {
+  padding: var(--space-sm) var(--space-xl);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  border: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

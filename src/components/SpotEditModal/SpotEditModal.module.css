@@ -1,0 +1,197 @@
+/* ========================================
+   景点编辑弹窗样式
+   ======================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: overlayIn 0.15s ease;
+}
+
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.2s ease;
+}
+
+/* ---- 头部 ---- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xl) var(--space-2xl);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-round);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-500);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
+.closeButton:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-900);
+}
+
+/* ---- 表单 ---- */
+
+.body {
+  padding: var(--space-xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.fieldRow {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
+
+.input {
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-gray-50);
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-primary) !important;
+}
+
+.textarea {
+  padding: var(--space-md);
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-gray-50);
+  resize: vertical;
+  line-height: var(--line-height-relaxed);
+  transition: border-color var(--transition-fast);
+}
+
+.textarea:focus {
+  border-color: var(--color-primary) !important;
+}
+
+.selectWrap {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-gray-50);
+  appearance: auto;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: var(--color-primary) !important;
+}
+
+/* ---- 底部 ---- */
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-2xl);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.cancelButton {
+  padding: var(--space-sm) var(--space-xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cancelButton:hover {
+  border-color: var(--color-gray-500);
+}
+
+.saveButton {
+  padding: var(--space-sm) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-white);
+  background: var(--color-accent);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.saveButton:hover {
+  background: var(--color-accent-hover);
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

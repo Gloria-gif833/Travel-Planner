@@ -1,0 +1,38 @@
+/* ========================================
+   注意事项框样式
+   ======================================== */
+
+.noticeBox {
+  background: #FFF8F0;
+  border: 1px solid #F5E0C0;
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+.title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-sm);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.item {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: var(--line-height-relaxed);
+  padding-left: var(--space-lg);
+  position: relative;
+}
+
+.item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+}

@@ -1,0 +1,85 @@
+// Travel Planner — Database Schema v1.0
+// 开发环境使用 SQLite
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String?
+
+  itineraries Itinerary[]
+  materials   Material[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Itinerary {
+  id      String @id @default(cuid())
+  userId  String @map("user_id")
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title   String
+  data    String
+  summary String?
+
+  versions   Version[]
+  materials  Material[]
+  shareLinks ShareLink[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("itineraries")
+}
+
+model Version {
+  id            String    @id @default(cuid())
+  itineraryId   String    @map("itinerary_id")
+  itinerary     Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  versionNumber Int       @map("version_number")
+  data          String
+  changeType    String?   @map("change_type")
+  changeSummary String?   @map("change_summary")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("versions")
+}
+
+model Material {
+  id          String     @id @default(cuid())
+  userId      String     @map("user_id")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itineraryId String?    @map("itinerary_id")
+  itinerary   Itinerary? @relation(fields: [itineraryId], references: [id])
+  type        String
+  content     String?
+  fileUrl     String?    @map("file_url")
+  fileName    String?    @map("file_name")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("materials")
+}
+
+model ShareLink {
+  id          String    @id @default(cuid())
+  itineraryId String    @map("itinerary_id")
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  shortCode   String    @unique @map("short_code")
+  expiresAt   DateTime  @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("share_links")
+}

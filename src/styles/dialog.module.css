@@ -1,0 +1,152 @@
+/* ========================================
+   对话页样式
+   ======================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ---- 页面顶部 ---- */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.backButton:hover {
+  color: var(--color-gray-900);
+  background: var(--color-gray-100);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* ---- 主体布局（左侧对话 + 右侧面板） ---- */
+
+.body {
+  display: flex;
+  gap: var(--space-xl);
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- 左侧：对话区 ---- */
+
+.chatSection {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ---- 右侧：面板区 ---- */
+
+.sidePanel {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 220px;
+  max-width: 280px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+/* 大屏宽屏：面板更宽 */
+@media (min-width: 1600px) {
+  .sidePanel {
+    min-width: 260px;
+    max-width: 340px;
+  }
+}
+
+/* 大屏笔记本：舒适居中 */
+@media (max-width: 1400px) {
+  .sidePanel {
+    min-width: 200px;
+    max-width: 260px;
+  }
+}
+
+/* 小屏笔记本/平板横屏：面板再缩窄，聊天区保持 */
+@media (max-width: 1200px) {
+  .sidePanel {
+    min-width: 180px;
+    max-width: 220px;
+  }
+
+  .chatSection {
+    flex: 2.5;
+  }
+}
+
+/* 窄屏：改为上下布局 */
+@media (max-width: 1024px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .sidePanel {
+    flex: none;
+    max-width: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .sidePanel > * {
+    flex: 1;
+    min-width: 180px;
+  }
+}
+
+/* 平板竖屏：上下布局，面板横排 */
+@media (max-width: 768px) {
+  .sidePanel {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .sidePanel > * {
+    min-width: 0;
+  }
+
+  .topBar {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+}

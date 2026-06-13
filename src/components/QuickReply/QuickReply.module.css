@@ -1,0 +1,61 @@
+/* ========================================
+   快捷回复按钮组样式
+   ======================================== */
+
+.quickReply {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+  justify-content: center;
+}
+
+.button {
+  padding: var(--space-sm) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.buttonPrimary {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent);
+}
+
+.buttonPrimary:hover {
+  background: var(--color-accent-hover);
+}
+
+.buttonSecondary {
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+}
+
+.buttonSecondary:hover {
+  border-color: var(--color-gray-500);
+  color: var(--color-gray-900);
+}
+
+.buttonView {
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent);
+  font-size: var(--font-size-lg);
+  padding: var(--space-md) var(--space-3xl);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.buttonView:hover {
+  background: var(--color-accent-hover);
+  transform: scale(1.02);
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 107, 53, 0); }
+}

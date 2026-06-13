@@ -1,0 +1,175 @@
+/* ========================================
+   AI 攻略调整窗口样式
+   ======================================== */
+
+.panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- 标题栏 ---- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+  background: var(--color-gray-50);
+}
+
+.title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.badge {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ---- 消息列表 ---- */
+
+.messageList {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.message {
+  display: flex;
+  gap: var(--space-xs);
+  max-width: 95%;
+  animation: msgIn 0.2s ease;
+}
+
+.aiMessage {
+  align-self: flex-start;
+}
+
+.userMessage {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-round);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  background: var(--color-gray-100);
+}
+
+.bubble {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.aiMessage .bubble {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-top-left-radius: var(--radius-sm);
+}
+
+.userMessage .bubble {
+  background: #9E9583;
+  color: var(--color-white);
+  border-top-right-radius: var(--radius-sm);
+}
+
+/* ---- 空状态 ---- */
+
+.empty {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--color-gray-400);
+  font-size: var(--font-size-sm);
+}
+
+/* ---- 输入区 ---- */
+
+.inputArea {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.input {
+  flex: 1;
+  height: 32px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-gray-200) !important;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-900);
+  background: var(--color-gray-50);
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-accent) !important;
+}
+
+.input::placeholder {
+  color: var(--color-gray-300);
+}
+
+.sendButton {
+  height: 32px;
+  width: 32px;
+  border-radius: var(--radius-round);
+  background: var(--color-accent);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border: none;
+  flex-shrink: 0;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes msgIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

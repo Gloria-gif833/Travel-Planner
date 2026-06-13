@@ -1,0 +1,351 @@
+/* ========================================
+   攻略展示页样式
+   ======================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ---- 顶部操作栏 ---- */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.backButton:hover {
+  color: var(--color-gray-900);
+  background: var(--color-gray-100);
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.actionButton {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.actionButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.editHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-300);
+  margin-left: var(--space-sm);
+  white-space: nowrap;
+}
+
+/* ---- 主体布局（左侧攻略 + 右侧面板） ---- */
+
+.body {
+  display: flex;
+  gap: var(--space-xl);
+  flex: 1;
+  min-height: 0;
+}
+
+.mainContent {
+  flex: 3;
+  overflow-y: auto;
+  padding-right: var(--space-sm);
+  min-width: 0;
+}
+
+.sidePanel {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 220px;
+  max-width: 280px;
+  overflow-y: auto;
+}
+
+/* ---- 攻略头部 ---- */
+
+/* (handled by ItineraryHeader.module.css) */
+
+/* ---- 天数列表 ---- */
+
+.dayList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+/* ---- 添加新的一天按钮 ---- */
+
+.addDayButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-lg);
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: transparent;
+  margin-top: var(--space-xs);
+}
+
+.addDayButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+/* ========================================
+   空状态 / 加载状态
+   ======================================== */
+
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+}
+
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.emptyIcon {
+  font-size: 48px;
+  opacity: 0.6;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.emptyText {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.emptyBtnGroup {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.emptyBtnPrimary {
+  padding: var(--space-md) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.emptyBtnPrimary:hover {
+  background: var(--color-accent-hover);
+}
+
+.emptyBtnSecondary {
+  padding: var(--space-md) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  border: 1px solid var(--color-gray-300);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.emptyBtnSecondary:hover {
+  border-color: var(--color-gray-500);
+  color: var(--color-gray-900);
+}
+
+/* ---- 加载状态 ---- */
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 400px;
+}
+
+.loadingContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.loadingSpinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-gray-200);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loadingTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.loadingText {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  line-height: 1.6;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Responsive — 多级断点适配
+   ======================================== */
+
+/* 宽屏大屏：面板更舒服 */
+@media (min-width: 1600px) {
+  .sidePanel {
+    min-width: 260px;
+    max-width: 320px;
+  }
+}
+
+/* 大屏笔记本：压缩面板 */
+@media (max-width: 1400px) {
+  .sidePanel {
+    min-width: 200px;
+    max-width: 250px;
+  }
+}
+
+/* 小屏笔记本/平板横屏：压缩面板+聊天区比例 */
+@media (max-width: 1200px) {
+  .sidePanel {
+    min-width: 180px;
+    max-width: 220px;
+  }
+
+  .mainContent {
+    flex: 2.5;
+  }
+}
+
+/* 窄屏：改为上下布局 */
+@media (max-width: 1024px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .mainContent {
+    overflow-y: visible;
+    padding-right: 0;
+  }
+
+  .sidePanel {
+    flex: none;
+    max-width: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y: visible;
+    gap: var(--space-md);
+  }
+
+  .sidePanel > * {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 900px) {
+  .topBar {
+    flex-wrap: wrap;
+  }
+
+  .actionButtons {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .editHint {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidePanel {
+    flex-direction: column;
+  }
+
+  .sidePanel > * {
+    min-width: 0;
+  }
+}

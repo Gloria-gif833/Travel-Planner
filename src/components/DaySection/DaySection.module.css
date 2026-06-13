@@ -1,0 +1,498 @@
+/* ========================================
+   行程组件样式
+   ======================================== */
+
+/* ---- Day 容器 ---- */
+
+.day {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast);
+}
+
+.day:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Day 头部（可点击折叠） ---- */
+
+.dayHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-xl);
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.dayHeader:hover {
+  background: var(--color-gray-50);
+}
+
+.dayInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.dayNumber {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  background: var(--color-accent-50);
+  padding: 2px var(--space-md);
+  border-radius: var(--radius-full);
+}
+
+.dayTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.daySpots {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* ---- 折叠箭头 ---- */
+
+.chevron {
+  font-size: 12px;
+  color: var(--color-gray-300);
+  transition: transform var(--transition-normal);
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+/* ---- Day 内容 ---- */
+
+.dayBody {
+  padding: 0 var(--space-xl) var(--space-xl);
+  animation: slideDown 0.25s ease;
+}
+
+/* ---- 时段 ---- */
+
+.slot {
+  position: relative;
+  padding-left: var(--space-2xl);
+  margin-bottom: var(--space-lg);
+}
+
+.slot:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 28px;
+  bottom: -16px;
+  width: 2px;
+  background: var(--color-gray-200);
+}
+
+.slotHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.slotIcon {
+  font-size: 18px;
+}
+
+.slotLabel {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+}
+
+.slotContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ---- 空时段 ---- */
+
+.emptySlot {
+  padding: var(--space-lg);
+  text-align: center;
+  background: var(--color-gray-50);
+  border: 1px dashed var(--color-gray-200);
+  border-radius: var(--radius-md);
+}
+
+.emptySlotText {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+}
+
+/* ---- 景点卡片 ---- */
+
+.spotCard {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  transition: box-shadow var(--transition-fast);
+}
+
+.spotCard:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+/* 城际交通卡片（高铁/火车/飞机） */
+.transitCard {
+  background: linear-gradient(135deg, var(--color-primary-bg) 0%, var(--color-gray-50) 100%);
+  border-color: var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+}
+
+.spotHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.spotName {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+}
+
+.spotDuration {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  white-space: nowrap;
+}
+
+.spotDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-xs);
+}
+
+.spotTags {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.spotTag {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- 出行信息连线 ---- */
+
+.transportLine {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-xs) 0;
+  position: relative;
+}
+
+.transportDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-gray-300);
+  border-radius: var(--radius-round);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.transportBar {
+  display: none;
+}
+
+.transportInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.transportIcon {
+  font-size: 14px;
+}
+
+.transportText {
+  font-style: italic;
+}
+
+/* ---- 贴士 ---- */
+
+.dayTips {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  background: #FFFDF5;
+  border: 1px solid #F5EBD0;
+  border-radius: var(--radius-md);
+}
+
+.tipsIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.tipItem {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: var(--line-height-normal);
+}
+
+.tipItem::before {
+  content: '• ';
+  color: var(--color-accent);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   编辑交互样式（步骤 06）
+   ======================================== */
+
+/* ---- 拖拽手柄 ---- */
+
+.dragHandle {
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: grab;
+  color: var(--color-gray-300);
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  user-select: none;
+}
+
+.spotCard {
+  position: relative;
+}
+
+.spotCard:hover .dragHandle {
+  opacity: 1;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* ---- 景点头部右侧 ---- */
+
+.spotHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.spotTitleArea {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- 景点底部操作栏 ---- */
+
+.spotFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.spotFooterLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* ---- 推荐理由 ---- */
+
+.recommendBox {
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+  background: linear-gradient(135deg, #FFFDF5 0%, #FFF9E6 100%);
+  border: 1px solid #F5EBD0;
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+}
+
+.recommendIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.recommendText {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ---- 门票标识 ---- */
+
+.ticketBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-sm);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.ticketFree {
+  background: #E6F9E8;
+  color: #2D8A3E;
+  border: 1px solid #B8E6C0;
+}
+
+.ticketPaid {
+  background: #FFF0E6;
+  color: #CC6B1A;
+  border: 1px solid #F5D0A0;
+}
+
+.spotActions {
+  display: flex;
+  gap: var(--space-xs);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.spotCard:hover .spotActions {
+  opacity: 1;
+}
+
+.spotActionBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-round);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-500);
+}
+
+.spotActionBtn:hover {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border-color: var(--color-gray-300);
+}
+
+.spotDeleteBtn:hover {
+  background: #FFF0F0;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* ---- 原地编辑输入框 ---- */
+
+.inlineInput {
+  height: 28px;
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--color-primary) !important;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-white);
+  width: 100%;
+  max-width: 300px;
+}
+
+.inlineInputSmall {
+  width: 80px;
+  font-size: var(--font-size-xs);
+}
+
+/* ---- 可点击编辑提示 ---- */
+
+.spotName,
+.spotDuration,
+.spotDesc {
+  cursor: text;
+  border-radius: var(--radius-sm);
+  padding: 1px 2px;
+  transition: background var(--transition-fast);
+}
+
+.spotName:hover,
+.spotDuration:hover,
+.spotDesc:hover {
+  background: rgba(158, 149, 131, 0.08);
+}
+
+/* ---- 添加按钮 ---- */
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: transparent;
+}
+
+.addButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.addDayButton {
+  composes: addButton;
+  padding: var(--space-md);
+  border-style: dashed;
+  margin-top: var(--space-md);
+}

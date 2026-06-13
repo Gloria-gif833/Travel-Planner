@@ -1,0 +1,11 @@
+import PlaceholderPage from './PlaceholderPage';
+
+export { default as HomePage } from './HomePage';
+export { default as DialogPage } from './DialogPage';
+export { default as UploadPage } from './UploadPage';
+export { default as ItineraryPage } from './ItineraryPage';
+export { default as VersionPage } from './VersionPage';
+export { default as ExportPage } from './ExportPage';
+export { default as SharePage } from './SharePage';
+export { default as LoginPage } from './LoginPage';
+export { default as RegisterPage } from './RegisterPage';

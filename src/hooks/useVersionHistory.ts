@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useVersion } from '../context/VersionContext';
 import { useItinerary } from '../context/ItineraryContext';
-import type { ChangeType, VersionSnapshot } from '../types/version';
+import type { ChangeType } from '../types/version';
 
 /* ========================================
    useVersionHistory Hook

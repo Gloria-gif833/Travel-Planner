@@ -20,8 +20,8 @@ export async function exportToWord(
       TableCell,
       WidthType,
       AlignmentType,
-      BorderStyle,
     } = await import('docx');
+    // @ts-expect-error file-saver has no type declarations
     const { saveAs } = await import('file-saver');
 
     // 构建文档
@@ -70,7 +70,7 @@ export async function exportToWord(
         );
 
         for (const spot of slot.spots) {
-          const spotLines: (string | TextRun)[] = [];
+          const spotLines: typeof TextRun.prototype[] = [];
 
           spotLines.push(
             new TextRun({
@@ -199,10 +199,10 @@ export async function exportToWord(
           new TableRow({
             children: [
               new TableCell({
-                children: [new Paragraph({ text: '合计', bold: true })],
+                children: [new Paragraph({ text: '合计' })],
               }),
               new TableCell({
-                children: [new Paragraph({ text: `¥${total.toLocaleString()}`, bold: true })],
+                children: [new Paragraph({ text: `¥${total.toLocaleString()}` })],
               }),
             ],
           }),

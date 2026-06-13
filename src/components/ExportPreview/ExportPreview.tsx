@@ -7,7 +7,7 @@ interface ExportPreviewProps {
   format: 'pdf' | 'word';
 }
 
-export default function ExportPreview({ itinerary, format }: ExportPreviewProps) {
+export default function ExportPreview({ itinerary, format: _format }: ExportPreviewProps) {
   const total =
     itinerary.practicalInfo.budget.transport +
     itinerary.practicalInfo.budget.hotel +

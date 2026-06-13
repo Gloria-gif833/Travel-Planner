@@ -1,5 +1,3 @@
-import PlaceholderPage from './PlaceholderPage';
-
 export { default as HomePage } from './HomePage';
 export { default as DialogPage } from './DialogPage';
 export { default as UploadPage } from './UploadPage';

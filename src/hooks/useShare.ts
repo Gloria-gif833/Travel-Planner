@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { generateShareLink, formatExpiryDate, type ShareLinkResult } from '../services/shareService';
+import { generateShareLink, type ShareLinkResult } from '../services/shareService';
 
 /* ========================================
    useShare Hook

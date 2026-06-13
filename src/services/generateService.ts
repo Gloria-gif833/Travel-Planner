@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import type { Requirements } from '../types/conversation';
 
 /* ========================================
    攻略生成 API 调用
@@ -19,7 +20,7 @@ export interface GenerateResponse {
  * 生成攻略
  */
 export async function generateItinerary(
-  requirements: Record<string, string>,
+  requirements: Record<string, string> | Requirements,
   materials?: { type: 'text' | 'image'; content: string }[],
   conversationHistory?: { role: string; content: string }[]
 ): Promise<GenerateResponse> {

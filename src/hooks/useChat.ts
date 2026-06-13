@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useConversation } from '../context/ConversationContext';
 import { streamChat } from '../services/chatService';
@@ -6,7 +6,7 @@ import { generateItinerary } from '../services/generateService';
 import { createItinerary as saveItinerary } from '../services/itineraryService';
 import { useItinerary } from '../context/ItineraryContext';
 import { enrichItinerary } from '../utils/enrichItinerary';
-import type { Message, RequirementKey } from '../types/conversation';
+import type { Message, RequirementKey, Requirements } from '../types/conversation';
 
 /* ========================================
    useChat Hook — 纯 AI 驱动对话
@@ -120,7 +120,7 @@ export function useChat() {
           content: m.text || '...',
         }));
 
-        for await (const chunk of streamChat(allMessages)) {
+        for await (const chunk of streamChat(allMessages as { role: 'user' | 'assistant'; content: string }[])) {
           aiResponse += chunk;
           dispatch({ type: 'UPDATE_MESSAGE', payload: { id: aiMsgId, text: aiResponse } });
         }
@@ -302,7 +302,7 @@ function checkMaterialPhase(text: string): boolean {
  * 将当前消息文本与已有需求合并，模拟用户消息发送后的需求状态
  * 解决 React 闭包中 state.requirements 还未更新 dispatch 的问题
  */
-function projectRequirements(existing: Record<string, string>, currentText: string): Record<string, string> {
+function projectRequirements(existing: Record<string, string> | Requirements, currentText: string): Record<string, string> {
   const projected = { ...existing };
   // 预算
   const budgetMatch = currentText.match(/人均[约大概]?\s*(\d+)/) || currentText.match(/每人[约大概]?\s*(\d+)/) || currentText.match(/每个人[约大概]?\s*(\d+)/) || currentText.match(/一个人[约大概预算]?\s*(\d+)/);
@@ -369,7 +369,7 @@ function projectRequirements(existing: Record<string, string>, currentText: stri
 /**
  * 从AI回复中提取行程线索（多目的地+天数分配）
  */
-function detectAiItineraryHints(text: string, dispatch: any, currentRequirements: Record<string, string> = {}) {
+function detectAiItineraryHints(text: string, dispatch: any, currentRequirements: Record<string, string> | Requirements = {}) {
   // 匹配 "X可以玩Y天"、"X逛Y天" 等模式
   const playPattern = /([一-鿿]{2,6})[可以]?[玩逛待]\s*(\d+)\s*[-~至到]?\s*(\d*)\s*天/g;
   const totalDaysPattern = /(?:总共|一共|合计)\s*(\d+)\s*天/;
@@ -384,10 +384,8 @@ function detectAiItineraryHints(text: string, dispatch: any, currentRequirements
   }
 
   // 提取"华山玩1-2天，西安2-3天"等信息
-  let hasDaysFromPlay = false;
-  let match;
-  while ((match = playPattern.exec(text)) !== null) {
-    hasDaysFromPlay = true;
+  while (playPattern.exec(text) !== null) {
+    // extract day ranges
   }
 
   // 简单模式: "X玩Y天" ("华山玩1-2天")
@@ -553,7 +551,7 @@ function detectAndUpdateRequirement(
   }
 
   // 天数
-  const dayPatterns: [RegExp, () => string][] = [
+  const dayPatterns: [RegExp, (m?: RegExpMatchArray) => string][] = [
     [/一日游|玩一天|1天/, () => '1天'],
     [/两日游|两天|玩两天|2天/, () => '2天'],
     [/三日游|三天|玩三天|3天/, () => '3天'],
@@ -566,13 +564,13 @@ function detectAndUpdateRequirement(
     [/十天|玩十天|10天/, () => '10天'],
     [/两周|十四天|半个月|14天|15天/, () => '14天'],
     [/一个月|三十天|30天/, () => '30天'],
-    [/(\d+)\s*天/, (m) => `${m[1]}天`],
-    [/玩\s*(\d+)\s*天/, (m) => `${m[1]}天`],
+    [/(\d+)\s*天/, (m?: RegExpMatchArray) => `${m![1]}天`],
+    [/玩\s*(\d+)\s*天/, (m?: RegExpMatchArray) => `${m![1]}天`],
   ];
   for (const [pattern, getValue] of dayPatterns) {
     const m = lastUserText.match(pattern);
     if (m) {
-      dispatch({ type: 'UPDATE_REQUIREMENT', payload: { key: 'days', value: getValue() } });
+      dispatch({ type: 'UPDATE_REQUIREMENT', payload: { key: 'days', value: getValue(m) } });
       break;
     }
   }

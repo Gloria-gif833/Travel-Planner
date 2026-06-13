@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useConversation } from '../context/ConversationContext';
 import { useUpload } from '../hooks/useUpload';

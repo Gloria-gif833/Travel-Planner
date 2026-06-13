@@ -28,7 +28,7 @@ export function generateDayNumber() {
    Mock 数据 — 5天4夜成都自由行
    ======================================== */
 
-const mockItinerary: ItineraryData = {
+export const mockItinerary: ItineraryData = {
   id: 'iti_001',
   title: '5天4夜 成都自由行攻略',
   days: [
@@ -328,7 +328,7 @@ const mockItinerary: ItineraryData = {
    Mock 攻略 2 — 3天2夜大理自由行
    ======================================== */
 
-const mockItinerary2: ItineraryData = {
+export const mockItinerary2: ItineraryData = {
   id: 'iti_002',
   title: '3天2夜 大理自由行攻略',
   days: [

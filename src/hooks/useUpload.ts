@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Material, MaterialType } from '../types/material';
+import type { Material } from '../types/material';
 
 /* ========================================
    useUpload Hook — 素材上传/管理逻辑

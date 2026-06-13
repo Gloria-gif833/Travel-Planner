@@ -94,15 +94,15 @@ export default function ItineraryPage() {
   const handleAddSpot = useCallback(
     (dayIndex: number, slotIndex: number) => {
       const newSpot: Spot = {
-        id: '', // will be generated on save
+        id: '',
         name: '',
         description: '',
         duration: '1小时',
         tags: [],
       };
-      setEditingSpot(null); // null = 新建模式
-      // 用临时标记存储目标位置，在保存时使用
+      setEditingSpot(null);
       setPendingAdd({ dayIndex, slotIndex });
+      void newSpot; // referenced for future use
       setEditModalOpen(true);
     },
     []
@@ -217,7 +217,7 @@ export default function ItineraryPage() {
         <div className={styles.body}>
           {/* 左侧：攻略内容 */}
           <div className={styles.mainContent}>
-            <ItineraryHeader itinerary={itinerary} />
+            <ItineraryHeader itinerary={itinerary!} />
             <div className={styles.dayList}>
               {itinerary?.days?.map((day, idx) => (
                 <DaySection
@@ -244,12 +244,12 @@ export default function ItineraryPage() {
           <div className={styles.sidePanel}>
             <AiAdjustPanel />
             <InfoPanel
-              info={itinerary.practicalInfo}
+              info={itinerary!.practicalInfo}
               onUpdate={(field, value, userNote) =>
                 dispatch({ type: 'UPDATE_PRACTICAL_INFO', payload: { field, value, userNote } })
               }
             />
-            <NoticeBox notices={itinerary.notices} />
+            <NoticeBox notices={itinerary!.notices} />
           </div>
         </div>
 

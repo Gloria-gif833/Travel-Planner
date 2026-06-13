@@ -29,7 +29,7 @@ function formatTime(iso: string): string {
 }
 
 export default function VersionHistoryModal({ open, onClose }: VersionHistoryModalProps) {
-  const { versions, currentVersionNumber, rollback, rollbackToPrevious } =
+  const { versions, currentVersionNumber, rollback } =
     useVersionHistory();
 
   const [confirmTarget, setConfirmTarget] = useState<number | null>(null);

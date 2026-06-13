@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Spot } from '../../types/itinerary';
-import { TRANSPORT_ICONS } from '../../types/itinerary';
 import TransportLine from './TransportLine';
 import styles from './DaySection.module.css';
 

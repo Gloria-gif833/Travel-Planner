@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import MyItinerariesPanel from '../MyItinerariesPanel/MyItinerariesPanel';
 import styles from './Sidebar.module.css';

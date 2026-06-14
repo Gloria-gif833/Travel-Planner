@@ -56,15 +56,15 @@ export interface ShareLinkResult {
  * 生成分享链接
  */
 export async function createShareLink(
-  userId: string,
+  guestId: string,
   itineraryId: string
 ): Promise<ShareLinkResult> {
   const db = getDb();
 
   // 验证攻略归属
   const itinerary = db.prepare(
-    'SELECT id FROM itineraries WHERE id = ? AND user_id = ?'
-  ).get(itineraryId, userId);
+    'SELECT id FROM itineraries WHERE id = ? AND guest_id = ?'
+  ).get(itineraryId, guestId);
   if (!itinerary) {
     throw new Error('攻略不存在');
   }
@@ -129,16 +129,16 @@ export async function getSharedItinerary(shortCode: string) {
 /**
  * 获取用户的分享链接列表
  */
-export async function getUserShareLinks(userId: string) {
+export async function getUserShareLinks(guestId: string) {
   const db = getDb();
 
   const links = db.prepare(`
     SELECT sl.*, i.title as itinerary_title
     FROM share_links sl
     JOIN itineraries i ON i.id = sl.itinerary_id
-    WHERE i.user_id = ?
+    WHERE i.guest_id = ?
     ORDER BY sl.created_at DESC
-  `).all(userId) as any[];
+  `).all(guestId) as any[];
 
   return links.map((l: any) => ({
     id: l.id,
@@ -155,14 +155,14 @@ export async function getUserShareLinks(userId: string) {
 /**
  * 删除分享链接
  */
-export async function deleteShareLink(id: string, userId: string) {
+export async function deleteShareLink(id: string, guestId: string) {
   const db = getDb();
 
   const link = db.prepare(`
     SELECT sl.id FROM share_links sl
     JOIN itineraries i ON i.id = sl.itinerary_id
-    WHERE sl.id = ? AND i.user_id = ?
-  `).get(id, userId) as any;
+    WHERE sl.id = ? AND i.guest_id = ?
+  `).get(id, guestId) as any;
 
   if (!link) return false;
 

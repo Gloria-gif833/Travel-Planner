@@ -25,8 +25,13 @@ export default function MyItinerariesPanel({ onNavigate }: MyItinerariesPanelPro
       // 从数据库加载完整数据
       const full = await fetchItineraryById(id);
       if (full?.data) {
-        dispatch({ type: 'SET_ITINERARY', payload: full.data });
-        dispatch({ type: 'ADD_TO_LIST', payload: full.data });
+        // 后端返回：full = { id, guest_id, title, data: {title, days, ...}, summary }
+        // full.data 就是攻略内容对象，需要把 id 合并到顶层
+        const normalized = { ...full.data, id: full.id };
+        if (normalized.days) {
+          dispatch({ type: 'SET_ITINERARY', payload: normalized });
+          dispatch({ type: 'ADD_TO_LIST', payload: normalized });
+        }
       }
     }
     if (location.pathname !== '/itinerary') {

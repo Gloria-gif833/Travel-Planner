@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { z } from 'zod';
 import { validateRequest } from '../middlewares/validateRequest';
-import { authGuard } from '../middlewares/authGuard';
 import {
   createShareLink,
   getSharedItinerary,
@@ -13,26 +12,36 @@ import { logger } from '../utils/logger';
 
 const router = Router();
 
-// 生成分享链接需要认证
+/** 从请求头读取访客 ID，缺失时返回错误 */
+function getGuestId(req: Request): string {
+  const guestId = req.headers['x-guest-id'] as string;
+  if (!guestId) {
+    throw new Error('GUEST_REQUIRED');
+  }
+  return guestId;
+}
+
 const createSchema = z.object({
   itineraryId: z.string().min(1, '攻略 ID 不能为空'),
 });
 
 /**
- * POST /api/share — 生成分享链接（需认证）
+ * POST /api/share — 生成分享链接（需访客标识）
  */
 router.post(
   '/',
-  authGuard,
   validateRequest(createSchema),
   async (req: Request, res: Response) => {
     try {
-      const userId = (req as any).userId as string;
+      const guestId = getGuestId(req);
       const { itineraryId } = req.body;
-      const result = await createShareLink(userId, itineraryId);
+      const result = await createShareLink(guestId, itineraryId);
       sendSuccess(res, result, 201);
     } catch (err) {
       const msg = (err as Error).message;
+      if (msg === 'GUEST_REQUIRED') {
+        return sendError(res, 'GUEST_REQUIRED', '缺少访客标识', 400);
+      }
       if (msg.includes('不存在')) {
         sendError(res, 'NOT_FOUND', msg, 404);
       } else {
@@ -67,31 +76,35 @@ router.get('/:code', async (req: Request, res: Response) => {
 });
 
 /**
- * GET /api/share — 获取用户分享列表（需认证）
+ * GET /api/share — 获取用户分享列表（需访客标识）
  */
-router.get('/', authGuard, async (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).userId as string;
-    const links = await getUserShareLinks(userId);
+    const guestId = getGuestId(req);
+    const links = await getUserShareLinks(guestId);
     sendSuccess(res, { items: links });
   } catch (err) {
-    logger.error(`获取分享列表失败: ${(err as Error).message}`);
+    const message = (err as Error).message;
+    if (message === 'GUEST_REQUIRED') return sendError(res, 'GUEST_REQUIRED', '缺少访客标识', 400);
+    logger.error(`获取分享列表失败: ${message}`);
     sendError(res, 'LIST_ERROR', '获取分享列表失败', 500);
   }
 });
 
 /**
- * DELETE /api/share/:id — 删除分享链接（需认证）
+ * DELETE /api/share/:id — 删除分享链接（需访客标识）
  */
-router.delete('/:id', authGuard, async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).userId as string;
+    const guestId = getGuestId(req);
     const id = req.params.id as string;
-    const deleted = await deleteShareLink(id, userId);
+    const deleted = await deleteShareLink(id, guestId);
     if (!deleted) return sendError(res, 'NOT_FOUND', '分享链接不存在', 404);
     sendSuccess(res, { message: '删除成功' });
   } catch (err) {
-    logger.error(`删除分享链接失败: ${(err as Error).message}`);
+    const message = (err as Error).message;
+    if (message === 'GUEST_REQUIRED') return sendError(res, 'GUEST_REQUIRED', '缺少访客标识', 400);
+    logger.error(`删除分享链接失败: ${message}`);
     sendError(res, 'DELETE_ERROR', '删除分享链接失败', 500);
   }
 });

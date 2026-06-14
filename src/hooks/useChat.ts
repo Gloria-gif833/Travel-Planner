@@ -459,7 +459,8 @@ function detectAndUpdateRequirement(
   const departureKeywords = [
     '从哪出发', '从哪里出发', '从哪儿出发', '出发地', '从哪里走',
     '从哪来', '你的出发地', '你的出发城市', '出发城市', '在哪个城市出发',
-    '哪个城市出发', '从哪里过去'
+    '哪个城市出发', '从哪里过去', '从哪个城市出发', '从哪里过来',
+    '从哪过来', '在哪个城市', '从哪开始', '从哪启程', '在哪里出发',
   ];
   const isAskingDeparture = departureKeywords.some(kw => lastAiText.includes(kw));
 
@@ -499,6 +500,17 @@ function detectAndUpdateRequirement(
     }
     // 直接返回，不再跑目的地逻辑
     // 注意：仍需继续执行下方其他字段检测，不要 return
+    // 防御：如果出发地城市意外出现在目的地中，将其移除（用户回答出发地时不应增加目的地）
+    if (matchedCities.length > 0 && currentReq.destination) {
+      const destCities = currentReq.destination.split('、');
+      const filtered = destCities.filter(c => !matchedCities.includes(c));
+      if (filtered.length !== destCities.length) {
+        dispatch({
+          type: 'UPDATE_REQUIREMENT',
+          payload: { key: 'destination', value: filtered.join('、') || '' }
+        });
+      }
+    }
   } else {
     // ===== 阶段1：AI还没问出发地，只收集目的地 =====
     const allMatchedCities = findAllCities(allUserJoined);
@@ -509,8 +521,11 @@ function detectAndUpdateRequirement(
       // 用户只发了省份，不提取目的地（让AI追问城市）
     } else if (allMatchedCities.length > 0) {
       // 与仓库旧目的地合并、去重、增量追加
+      // 但需要排除已明确的出发地城市（防止将出发地回答的城市也加入目的地）
       const oldDestList = currentReq.destination ? currentReq.destination.split('、') : [];
-      const destSet = new Set([...oldDestList, ...allMatchedCities]);
+      const departureCity = currentReq.departure || '';
+      const citiesToAdd = allMatchedCities.filter(c => c !== departureCity);
+      const destSet = new Set([...oldDestList, ...citiesToAdd]);
       const finalDestList = Array.from(destSet);
       dispatch({
         type: 'UPDATE_REQUIREMENT',
@@ -527,9 +542,10 @@ function detectAndUpdateRequirement(
   const travelDatePatterns = [
     lastUserText.match(/(\d+)\s*月[底末初份]?/),
     lastUserText.match(/([春夏秋冬])[季天]?/),
-    lastUserText.match(/(暑假|寒假|国庆|五一|春节|元旦|清明|端午|中秋)/),
-    lastUserText.match(/(三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)/),
+    lastUserText.match(/(暑假|寒假|国庆|五一|春节|元旦|清明|端午|中秋|春节前后|过年)/),
+    lastUserText.match(/(一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月)/),
     lastUserText.match(/(上旬|中旬|下旬)/),
+    lastUserText.match(/(年初|年底|年尾|岁末)/),
   ];
   for (const m of travelDatePatterns) {
     if (m) {

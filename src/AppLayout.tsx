@@ -23,7 +23,14 @@ export default function AppLayout() {
           // 最近一条：获取完整 data 后设为当前攻略
           const latestFull = await fetchItineraryById(items[0].id);
           if (latestFull?.data) {
-            dispatch({ type: 'SET_ITINERARY', payload: latestFull.data });
+            // 后端返回：{ id, guest_id, title, data: {title, days, ...}, summary }
+            // latestFull.data = <itinerary object> = { title, days: [...] }
+            // 需要将 id 合并到顶层，供侧边栏和切换使用
+            const normalized = { ...latestFull.data, id: latestFull.id };
+            if (normalized.days) {
+              dispatch({ type: 'SET_ITINERARY', payload: normalized });
+              dispatch({ type: 'ADD_TO_LIST', payload: normalized });
+            }
           }
         }
       })

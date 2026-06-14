@@ -146,7 +146,7 @@ export async function* callAiStream(
    Mock AI 回复（API Key 未配置时的降级）
    ======================================== */
 
-function mockAiResponse(_systemPrompt: string, userMessage: string): string {
+function mockAiResponse(systemPrompt: string, userMessage: string): string {
   const input = userMessage.toLowerCase();
 
   // 攻略生成
@@ -159,27 +159,68 @@ function mockAiResponse(_systemPrompt: string, userMessage: string): string {
     return `根据你的需求，我已经调整了攻略内容。${mockAdjustItinerary(input)}`;
   }
 
-  // 对话回复
-  if (input.includes('成都') || input.includes('destination')) {
-    return '成都好呀！一个来了就不想走的城市 🏙️ 大概玩几天呢？';
+  // 如果用户说"还没想好"、"不知道"、"没想法"、"你推荐一下"
+  if (input.includes('没想好') || input.includes('不知道') || input.includes('没想法') || input.includes('推荐一下') || input.includes('推荐') || input.includes('没想去哪') || input.includes('不晓得')) {
+    return '那我给你几个灵感吧：① 云南大理 – 苍山洱海，适合放松；② 重庆 – 美食+魔幻城市；③ 厦门 – 海滨文艺。你觉得这几个里有感兴趣的吗？😊';
   }
-  if (input.includes('天') && (input.match(/\d+/) || input.includes('几'))) {
-    return '好的！那这次旅行大概预算是多少呢？（比如：5000-8000、1万-1.5万）💰';
+
+  // 对话回复 — 按需求采集流程
+  // 目的地
+  const destinations = ['北京','上海','成都','重庆','西安','大理','丽江','厦门','三亚','广州','深圳','杭州','青岛'];
+  const mentionedDest = destinations.find(d => input.includes(d));
+  if (mentionedDest) {
+    return `${mentionedDest}好呀！一个很棒的目的地 🎯 你是从哪里出发呢？`;
   }
+
+  // 出发地相关
+  if ((input.includes('出发') || input.includes('从哪') || input.includes('从哪里')) && (input.includes('上海') || input.includes('北京') || input.includes('成都') || input.includes('广州') || input.includes('深圳') || input.includes('杭州') || input.includes('西安') || input.includes('重庆'))) {
+    const depCities = ['上海','北京','成都','广州','深圳','杭州','西安','重庆'];
+    const dep = depCities.find(d => input.includes(d));
+    if (dep) return `好的，从${dep}出发已记下！你大概什么时间去呢？比如几月份？📅`;
+    return '好的！你大概什么时间去呢？比如几月份？📅';
+  }
+
+  // 天数
+  if ((input.includes('天') && input.match(/\d+/)) || input.includes('几天') || input.includes('多久')) {
+    return '好的！那这次旅行大概预算是多少呢？（比如：人均3000-5000、8000-10000等）💰';
+  }
+
+  // 预算
   if (input.includes('预算') || input.includes('钱') || input.includes('¥') || input.includes('元')) {
     return '明白了～是独自旅行、情侣出游、朋友结伴还是带家人一起去呢？👥';
   }
-  if (input.includes('情侣') || input.includes('独自') || input.includes('朋友') || input.includes('家人') || input.includes('一个人') || input.includes('两个人')) {
-    return '太棒了！你更喜欢什么类型的玩法？自然风光、美食探店、人文历史、购物休闲，还是都想要？🎯';
-  }
-  if (input.includes('自然') || input.includes('美食') || input.includes('人文') || input.includes('购物') || input.includes('都喜欢')) {
-    return '完美！最后，住宿方面有什么偏好吗？比如民宿、酒店、青旅，或者对位置有要求？🏨';
-  }
-  if (input.includes('民宿') || input.includes('酒店') || input.includes('住宿')) {
-    return '好的！你的需求我都记下啦 ✅\n\n你是否有查看过相关的旅游攻略或帖子是你比较感兴趣的？如果有的话可以上传一些素材，我能为你生成更精准的攻略哦 😊';
+
+  // 同行人员
+  const companionKeywords = ['情侣','独自','朋友','家人','一个人','两个人','闺蜜','兄弟','同事','亲子','带娃'];
+  if (companionKeywords.some(k => input.includes(k))) {
+    return '太棒了！你更喜欢什么类型的玩法？比如自然风光、美食探店、人文历史、购物休闲？🎯';
   }
 
-  return '好的，我了解了！还有其他想告诉我的吗？😊';
+  // 游玩偏好
+  const prefKeywords = ['自然','美食','人文','购物','风景','拍照','休闲','徒步','海边','度假','历史','文化'];
+  if (prefKeywords.some(k => input.includes(k))) {
+    return '住宿方面有什么偏好吗？比如民宿、酒店、青旅，或者对位置有什么要求？🏨';
+  }
+
+  // 住宿偏好
+  const accomKeywords = ['民宿','酒店','青旅','客栈','地铁','市中心','安静','干净'];
+  if (accomKeywords.some(k => input.includes(k))) {
+    return '好的！这次出行你偏向什么交通方式呢？飞机、高铁还是自驾？🚄';
+  }
+
+  // 交通偏好
+  const transportKeywords = ['飞机','高铁','火车','自驾','开车','大巴','动车'];
+  if (transportKeywords.some(k => input.includes(k))) {
+    return '太好了，你的需求我都记下啦 ✅\n\n你之前有查过什么相关的攻略或者帖子吗？如果有发给我参考一下，我能做出更精准的推荐哦～😊';
+  }
+
+  // 通用回复（尽可能继续推进）
+  if (input.includes('是') || input.includes('没错') || input.includes('好的') || input.includes('可以') ||
+      input.includes('嗯') || input.includes('对')) {
+    return '了解啦！能再多说说你的计划吗？比如想去哪里、玩几天之类的～😊';
+  }
+
+  return '收到！还有其他想和我分享的吗？比如想去哪里、大概玩几天？😊';
 }
 
 function mockGenerateItinerary(): string {

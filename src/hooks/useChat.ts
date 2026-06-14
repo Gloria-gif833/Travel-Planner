@@ -40,35 +40,23 @@ export function useChat() {
    * 用模块级变量 _dialogInitialized 而非 state.initialized，
    * 因为 StrictMode 双挂载会导致 useReducer 状态重置
    */
-  const initConversation = useCallback(async () => {
+  const initConversation = useCallback(() => {
     if (_dialogInitialized) return;
     _dialogInitialized = true;
 
     dispatch({ type: 'SET_INITIALIZED', payload: true });
 
-    const aiMsgId = generateId();
+    // 直接显示欢迎语，不依赖 AI 生成
+    // 与系统提示词（DEMAND_COLLECTION_SYSTEM_PROMPT）中第1条消息规则保持一致
     dispatch({
       type: 'ADD_MESSAGE',
-      payload: { id: aiMsgId, role: 'ai', text: '', timestamp: Date.now() },
+      payload: {
+        id: generateId(),
+        role: 'ai',
+        text: 'Hello，欢迎来到 Travel Planner ✨ 我是你的私人旅行助手，最近有什么想去的地方嘛~',
+        timestamp: Date.now(),
+      },
     });
-
-    try {
-      let response = '';
-      for await (const chunk of streamChat([
-        { role: 'user', content: '你好，我想规划旅行' },
-      ])) {
-        response += chunk;
-        dispatch({ type: 'UPDATE_MESSAGE', payload: { id: aiMsgId, text: response } });
-      }
-    } catch {
-      dispatch({
-        type: 'UPDATE_MESSAGE',
-        payload: {
-          id: aiMsgId,
-          text: '你好，我是你的私人旅行助手，有什么想去的地方吗？',
-        },
-      });
-    }
   }, [dispatch]);
 
   // 素材生成逻辑由 DialogPage 组件内的 useEffect 处理

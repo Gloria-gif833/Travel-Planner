@@ -1,4 +1,4 @@
-name: Deploy
+name: CI - Build Verification
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # 前端：构建并部署到 Vercel
+  # 前端：构建验证（Netlify 自动部署）
   frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -32,14 +32,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Deploy to Vercel
-        if: github.ref == 'refs/heads/main'
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+      # Netlify 自动从 GitHub 部署（已连接 Netlify GitHub 集成）
+      # 此 workflow 只负责构建验证，实际部署由 Netlify 自动完成
 
   # 后端：构建 Docker 镜像并推送
   backend:

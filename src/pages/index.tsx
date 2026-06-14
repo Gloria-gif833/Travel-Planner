@@ -5,5 +5,6 @@ export { default as ItineraryPage } from './ItineraryPage';
 export { default as VersionPage } from './VersionPage';
 export { default as ExportPage } from './ExportPage';
 export { default as SharePage } from './SharePage';
+export { default as SharedViewPage } from './SharedViewPage';
 export { default as LoginPage } from './LoginPage';
 export { default as RegisterPage } from './RegisterPage';

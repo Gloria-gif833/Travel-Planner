@@ -2,9 +2,11 @@ import { logger } from '../utils/logger';
 
 /* ========================================
    攻略解析器 — AI 返回转结构化攻略数据
+   Each spot gets a unique id for frontend editing.
    ======================================== */
 
 interface ParsedSpot {
+  id: string;
   name: string;
   description: string;
   duration: string;
@@ -84,11 +86,11 @@ export function parseItinerary(raw: string): ParsedItinerary {
   const validatedDays: ParsedDay[] = days.map((day: any, di: number) => {
     const slots = Array.isArray(day.slots) ? day.slots : [];
 
-    const validatedSlots: ParsedSlot[] = slots.map((slot: any) => {
+    const validatedSlots: ParsedSlot[] = slots.map((slot: any, si: number) => {
       const label = VALID_SLOT_LABELS.includes(slot.label) ? slot.label : '上午';
       const spots = Array.isArray(slot.spots) ? slot.spots : [];
 
-      const validatedSpots: ParsedSpot[] = spots.map((spot: any) => ({
+      const validatedSpots: ParsedSpot[] = spots.map((spot: any, spi: number) => ({
         name: spot.name || '未命名景点',
         description: spot.description || '',
         duration: spot.duration || '1小时',
@@ -111,6 +113,8 @@ export function parseItinerary(raw: string): ParsedItinerary {
               price: spot.ticketInfo.price || (spot.ticketInfo.type === '收费' ? '价格待查' : ''),
             }
           : undefined,
+        // 生成唯一 id 供前端编辑/删除使用
+        id: spot.id || `spot_${di}_${si}_${spi}`,
       }));
 
       return { label, spots: validatedSpots };
@@ -138,6 +142,7 @@ export function parseItinerary(raw: string): ParsedItinerary {
 }
 
 function getDefaultDays(): ParsedDay[] {
+  const uid = () => 'spot_df_' + Math.random().toString(36).slice(2, 10);
   return [
     {
       dayNumber: 1,
@@ -146,15 +151,15 @@ function getDefaultDays(): ParsedDay[] {
       slots: [
         {
           label: '上午',
-          spots: [{ name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
+          spots: [{ id: uid(), name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
         },
         {
           label: '下午',
-          spots: [{ name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
+          spots: [{ id: uid(), name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
         },
         {
           label: '晚上',
-          spots: [{ name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
+          spots: [{ id: uid(), name: '景点待定', description: '请补充景点信息', duration: '2小时', tags: [] }],
         },
       ],
       tips: [],

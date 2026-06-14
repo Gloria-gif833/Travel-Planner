@@ -8,6 +8,7 @@ import {
   VersionPage,
   ExportPage,
   SharePage,
+  SharedViewPage,
   LoginPage,
   RegisterPage,
 } from './pages';
@@ -17,6 +18,9 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* 公开分享页（无侧边栏，无需登录） */}
+        <Route path="/s/:code" element={<SharedViewPage />} />
+
         {/* 登录/注册（无侧边栏） */}
         <Route
           path="/login"

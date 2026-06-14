@@ -6,7 +6,7 @@ function uid(): string {
   return crypto.randomUUID();
 }
 
-const BASE_URL = process.env.SHARE_BASE_URL || 'https://travelplanner.app/s/';
+const BASE_URL = process.env.SHARE_BASE_URL || 'https://travelplanner-gloria.netlify.app/s/';
 
 /**
  * 生成 8 位随机短码

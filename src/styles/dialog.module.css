@@ -150,3 +150,141 @@
     gap: var(--space-sm);
   }
 }
+
+/* ---- 重置按钮 ---- */
+
+.resetWrap {
+  position: relative;
+  margin-left: auto;
+}
+
+.resetButton {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  white-space: nowrap;
+}
+
+.resetButton:hover {
+  color: var(--color-danger);
+  background: #FDE8E8;
+}
+
+.resetTooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--color-gray-900);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  z-index: 50;
+  animation: fadeIn 0.15s ease;
+}
+
+.resetTooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 20px;
+  border: 6px solid transparent;
+  border-bottom-color: var(--color-gray-900);
+}
+
+/* ---- 重置确认弹窗 ---- */
+
+.resetOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.resetModal {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3xl);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: modalIn 0.2s ease;
+}
+
+.resetModalTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-md);
+}
+
+.resetModalDesc {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-2xl);
+}
+
+.resetModalActions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+}
+
+.resetModalCancel {
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.resetModalCancel:hover {
+  background: var(--color-gray-200);
+}
+
+.resetModalConfirm {
+  padding: var(--space-sm) var(--space-xl);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border: none;
+  transition: background var(--transition-fast);
+}
+
+.resetModalConfirm:hover {
+  background: var(--color-primary-hover);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

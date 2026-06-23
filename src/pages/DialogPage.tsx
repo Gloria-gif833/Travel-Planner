@@ -29,9 +29,12 @@ export default function DialogPage() {
     sendMessage,
     handleQuickReply,
     requestConfirmGenerate,
+    resetConversation,
   } = useChat();
   const [generating, setGenerating] = useState(false);
   const generationTriggered = useRef(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showResetTooltip, setShowResetTooltip] = useState(false);
 
   // 初始化对话
   useEffect(() => {
@@ -138,6 +141,19 @@ export default function DialogPage() {
     navigateToItinerary();
   };
 
+  /**
+   * 重置对话 — 清空所有消息和需求，重新开始
+   */
+  const handleReset = () => {
+    resetConversation();
+    setShowResetConfirm(false);
+    generationTriggered.current = false;
+    // 重置后重新初始化
+    setTimeout(() => {
+      initConversation();
+    }, 50);
+  };
+
   return (
     <div className={styles.container}>
       {/* 顶部栏 */}
@@ -146,6 +162,26 @@ export default function DialogPage() {
           ← 返回上一页
         </button>
         <h2 className={styles.pageTitle}>📋 需求搜集</h2>
+
+        {/* 重置按钮 */}
+        <div
+          className={styles.resetWrap}
+          onMouseEnter={() => setShowResetTooltip(true)}
+          onMouseLeave={() => setShowResetTooltip(false)}
+        >
+          <button
+            className={styles.resetButton}
+            onClick={() => setShowResetConfirm(true)}
+            title="重置对话，重新制定攻略"
+          >
+            ↺ 重置
+          </button>
+          {showResetTooltip && (
+            <div className={styles.resetTooltip}>
+              💡 点击可重新制定全新攻略哦~
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 主体布局 */}
@@ -183,6 +219,32 @@ export default function DialogPage() {
           <MaterialPanel materials={state.materials} />
         </div>
       </div>
+
+      {/* 重置确认弹窗 */}
+      {showResetConfirm && (
+        <div className={styles.resetOverlay} onClick={() => setShowResetConfirm(false)}>
+          <div className={styles.resetModal} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.resetModalTitle}>🔄 重新制定攻略？</h3>
+            <p className={styles.resetModalDesc}>
+              当前对话内容将会被清除，你可以重新开始一轮全新的需求采集。
+            </p>
+            <div className={styles.resetModalActions}>
+              <button
+                className={styles.resetModalCancel}
+                onClick={() => setShowResetConfirm(false)}
+              >
+                取消
+              </button>
+              <button
+                className={styles.resetModalConfirm}
+                onClick={handleReset}
+              >
+                ✓ 确定，重新开始
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

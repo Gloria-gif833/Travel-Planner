@@ -26,6 +26,15 @@ function generateId() {
  */
 let _dialogInitialized = false;
 
+/**
+ * 重置对话初始化标记 — 供"重置对话"功能使用
+ * 调用后 _dialogInitialized 恢复为 false，
+ * 下次进入 initConversation 会重新初始化
+ */
+export function resetDialogInitialized() {
+  _dialogInitialized = false;
+}
+
 export function useChat() {
   const { state, dispatch } = useConversation();
   const { dispatch: itineraryDispatch } = useItinerary();
@@ -253,6 +262,17 @@ export function useChat() {
   const requiredFields: RequirementKey[] = ['destination', 'departure', 'travelDate', 'days', 'budget', 'companions'];
   const canGenerate = requiredFields.every(f => state.requirements[f]);
 
+  /**
+   * 重置对话：清空初始化标记 + 重置状态
+   * 用于用户从旧对话返回后，点击"重置"开始新对话
+   */
+  const resetConversation = useCallback(() => {
+    resetDialogInitialized();
+    setShowQuickReply(false);
+    setConfirmGenerate(false);
+    dispatch({ type: 'RESET' });
+  }, [dispatch]);
+
   return {
     messages: state.messages,
     requirements: state.requirements,
@@ -267,6 +287,7 @@ export function useChat() {
     sendMessage,
     handleQuickReply,
     requestConfirmGenerate,
+    resetConversation,
   };
 }
 

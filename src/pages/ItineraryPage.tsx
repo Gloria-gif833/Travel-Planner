@@ -14,6 +14,7 @@ import VersionHistoryModal from '../components/VersionHistoryModal/VersionHistor
 import EmptyGuideModal from '../components/EmptyGuideModal/EmptyGuideModal';
 import { DragProvider } from '../components/DaySection/DragContext';
 import type { Spot } from '../types/itinerary';
+import { diffItinerary } from '../utils/diffItinerary';
 import styles from '../styles/itinerary.module.css';
 
 export default function ItineraryPage() {
@@ -36,15 +37,22 @@ export default function ItineraryPage() {
   const itinerary = state.current;
   const isLoading = state.loading;
 
-  // 当攻略数据变化时自动生成版本快照
+  // 当攻略数据变化时自动生成版本快照（使用 diff 工具生成可读摘要）
   useEffect(() => {
     if (!itinerary) return;
-    const currentJson = JSON.stringify(itinerary.days);
+    const currentJson = JSON.stringify({ days: itinerary.days, practicalInfo: itinerary.practicalInfo });
     if (prevItineraryRef.current && prevItineraryRef.current !== currentJson) {
-      createSnapshot('manual', '编辑了攻略内容');
+      try {
+        const { days: oldDays } = JSON.parse(prevItineraryRef.current);
+        const oldItin = { ...itinerary, days: oldDays };
+        const { summary } = diffItinerary(oldItin, itinerary);
+        createSnapshot('manual', summary || '编辑了攻略内容');
+      } catch {
+        createSnapshot('manual', '编辑了攻略内容');
+      }
     }
     prevItineraryRef.current = currentJson;
-  }, [itinerary?.days]);
+  }, [itinerary?.days, itinerary?.practicalInfo]);
 
   // 编辑后自动保存到数据库（2 秒防抖）
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

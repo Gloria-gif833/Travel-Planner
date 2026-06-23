@@ -1,0 +1,732 @@
+/* ========================================
+   快速需求采集页样式
+   ======================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ---- 顶部栏 ---- */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.backButton:hover {
+  color: var(--color-gray-900);
+  background: var(--color-gray-100);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* ---- 主体布局 ---- */
+
+.body {
+  display: flex;
+  gap: var(--space-xl);
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ---- 左侧：表单区 ---- */
+
+.formSection {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: var(--space-md);
+  gap: var(--space-lg);
+}
+
+.formHeader {
+  margin-bottom: var(--space-sm);
+}
+
+.formTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-xs);
+}
+
+.formDesc {
+  font-size: var(--font-size-md);
+  color: var(--color-gray-500);
+}
+
+/* ---- 表单项 ---- */
+
+.fieldGroup {
+  position: relative;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-sm);
+}
+
+.required {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+/* ---- 城市选择器 ---- */
+
+.citySelector {
+  position: relative;
+}
+
+.cityInput {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
+}
+
+.cityInput:hover {
+  border-color: var(--color-primary-light);
+}
+
+.cityInputFilled {
+  border-color: var(--color-primary);
+  background: var(--color-primary-bg);
+}
+
+.placeholder {
+  color: var(--color-gray-300);
+}
+
+.cityPicker {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  padding: var(--space-sm);
+  animation: dropIn 0.15s ease;
+}
+
+.searchInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-sm);
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: var(--color-primary);
+}
+
+/* 搜索结果 */
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cityOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.cityOption:hover {
+  background: var(--color-primary-bg);
+}
+
+.cityName {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+}
+
+.cityProvince {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+}
+
+.noResult {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+}
+
+/* 省份-城市级联 */
+.provinceCityList {
+  display: flex;
+  flex-direction: column;
+}
+
+.provinceList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.provinceItem {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  text-align: center;
+  transition: background var(--transition-fast);
+}
+
+.provinceItem:hover {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.citySelectList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.backToProvince {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.backToProvince:hover {
+  background: var(--color-primary-bg);
+}
+
+.cityItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  transition: background var(--transition-fast);
+}
+
+.cityItem:hover {
+  background: var(--color-primary-bg);
+  color: var(--color-gray-900);
+}
+
+.cityItemHot {
+  font-weight: var(--font-weight-medium);
+}
+
+.hotTag {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
+  background: var(--color-accent-50);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: auto;
+}
+
+/* ---- 日期选择器 ---- */
+
+.dateSelector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.dateInput {
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  min-width: 180px;
+}
+
+.dateInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.dateDisplay {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+/* ---- 天数选择器 ---- */
+
+.daysSelector {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.dayOption {
+  padding: var(--space-sm) var(--space-lg);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 60px;
+  text-align: center;
+}
+
+.dayOption:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.dayOptionActive {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.dayOptionActive:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-white);
+}
+
+/* ---- 偏好选择器 ---- */
+
+.preferenceSelector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.prefOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  background: var(--color-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.prefOption:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.prefOptionActive {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.prefOptionActive:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-white);
+}
+
+.prefIcon {
+  font-size: var(--font-size-md);
+}
+
+.customPrefWrap {
+  display: inline-flex;
+}
+
+.customPrefInput {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  background: transparent;
+  outline: none;
+  width: 140px;
+  transition: all var(--transition-fast);
+}
+
+.customPrefInput:focus {
+  border-color: var(--color-primary);
+  color: var(--color-gray-900);
+}
+
+.customPrefInputActive {
+  border-style: solid;
+  border-color: var(--color-primary-light);
+  color: var(--color-gray-900);
+}
+
+/* ---- 补充信息 ---- */
+
+.additionalInput {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  color: var(--color-gray-900);
+  background: var(--color-white);
+  resize: vertical;
+  min-height: 70px;
+  line-height: var(--line-height-normal);
+  transition: border-color var(--transition-fast);
+}
+
+.additionalInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.additionalInput::placeholder {
+  color: var(--color-gray-300);
+}
+
+/* ---- 提交按钮 ---- */
+
+.submitBtn {
+  width: 100%;
+  padding: var(--space-lg) var(--space-2xl);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  margin-top: var(--space-sm);
+  letter-spacing: 0.5px;
+}
+
+.submitBtn:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
+}
+
+.submitBtnDisabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.submitBtnDisabled:hover {
+  background: var(--color-gray-300);
+  transform: none;
+  box-shadow: none;
+}
+
+.submitBtnLoading {
+  opacity: 0.8;
+  cursor: wait;
+}
+
+.submitHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  margin-top: var(--space-xs);
+  text-align: center;
+}
+
+/* ---- 素材询问阶段 ---- */
+
+.materialPrompt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding-top: var(--space-xl);
+}
+
+.aiMessage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.aiBubble {
+  background: var(--color-gray-50);
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-gray-900);
+  white-space: pre-line;
+  max-width: 85%;
+  border-top-left-radius: 0;
+}
+
+.promptActions {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.promptBtn {
+  flex: 1;
+  padding: var(--space-lg) var(--space-2xl);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  text-align: center;
+}
+
+.yesBtn {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.yesBtn:hover {
+  background: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.noBtn {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.noBtn:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.promptBtn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+/* ---- 右侧：需求卡片 ---- */
+
+.sidePanel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  min-width: 260px;
+  max-width: 340px;
+}
+
+.reqCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-100);
+}
+
+.reqCardTitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-md);
+}
+
+.reqTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.reqTag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-primary-bg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  gap: var(--space-xs);
+}
+
+.reqTagHighlight {
+  background: var(--color-accent-50);
+  color: var(--color-accent-500);
+  font-weight: var(--font-weight-medium);
+}
+
+.reqEmpty {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-300);
+  text-align: center;
+  padding: var(--space-lg) 0;
+}
+
+/* ---- 进度卡片 ---- */
+
+.progressCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-100);
+}
+
+.progressBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.progressItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.progressDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  flex-shrink: 0;
+}
+
+.progressDotDone {
+  background: var(--color-success);
+}
+
+.progressDotEmpty {
+  background: var(--color-gray-200);
+}
+
+.progressLabelDone {
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-medium);
+}
+
+.progressHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-top: var(--space-md);
+  text-align: right;
+}
+
+/* ---- 动画 ---- */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- 响应式 ---- */
+
+@media (max-width: 1100px) {
+  .body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .sidePanel {
+    flex: none;
+    max-width: none;
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .reqCard, .progressCard {
+    flex: 1;
+  }
+
+  .provinceList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidePanel {
+    flex-direction: column;
+  }
+
+  .promptActions {
+    flex-direction: column;
+  }
+
+  .daysSelector {
+    gap: var(--space-xs);
+  }
+
+  .dayOption {
+    min-width: 48px;
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .preferenceSelector {
+    gap: var(--space-xs);
+  }
+
+  .provinceList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

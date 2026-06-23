@@ -11,6 +11,7 @@ import {
   SharedViewPage,
   LoginPage,
   RegisterPage,
+  QuickRequirementPage,
 } from './pages';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 
@@ -43,6 +44,7 @@ export default function Router() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/dialog" element={<DialogPage />} />
+          <Route path="/quick-requirement" element={<QuickRequirementPage />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/itinerary" element={<ItineraryPage />} />
           <Route path="/version" element={<VersionPage />} />

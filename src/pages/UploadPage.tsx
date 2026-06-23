@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useConversation } from '../context/ConversationContext';
 import { useUpload } from '../hooks/useUpload';
 import UploadArea from '../components/UploadArea/UploadArea';
@@ -7,9 +7,11 @@ import TextPasteArea from '../components/TextPasteArea/TextPasteArea';
 import MaterialPreview from '../components/MaterialPreview/MaterialPreview';
 import type { Material } from '../types/material';
 import styles from '../styles/upload.module.css';
+import { addQuickMaterial, clearQuickMaterials } from './QuickRequirementPage';
 
 export default function UploadPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { dispatch } = useConversation();
   const {
     materials,
@@ -22,6 +24,20 @@ export default function UploadPage() {
 
   const [submitted, setSubmitted] = useState(false);
   const [pendingText, setPendingText] = useState('');
+
+  /** 是否从快速需求页跳转而来 */
+  const fromQuick = searchParams.get('fromQuick') === 'true';
+
+  /**
+   * 返回上一页
+   */
+  const handleGoBack = () => {
+    if (fromQuick) {
+      navigate('/quick-requirement');
+    } else {
+      navigate('/dialog');
+    }
+  };
 
   /**
    * 将当前素材同步到全局 Context
@@ -41,7 +57,11 @@ export default function UploadPage() {
    */
   const handleSkip = () => {
     clearMaterials();
-    navigate('/dialog');
+    if (fromQuick) {
+      navigate('/quick-requirement');
+    } else {
+      navigate('/dialog');
+    }
   };
 
   /**
@@ -77,13 +97,21 @@ export default function UploadPage() {
       setPendingText('');
     }
 
-    // 同步到全局 Context（用完整的 finalMaterials）
-    dispatch({ type: 'CLEAR_MATERIALS' });
-    finalMaterials.forEach((m) => {
-      dispatch({ type: 'ADD_MATERIAL', payload: m });
-    });
-
-    navigate('/dialog?fromUpload=true');
+    if (fromQuick) {
+      // 快速需求模式：存到模块级存储，然后跳回快速需求页
+      clearQuickMaterials();
+      finalMaterials.forEach((m) => {
+        addQuickMaterial(m);
+      });
+      navigate('/quick-requirement?fromUpload=true');
+    } else {
+      // 对话模式：同步到全局 Context
+      dispatch({ type: 'CLEAR_MATERIALS' });
+      finalMaterials.forEach((m) => {
+        dispatch({ type: 'ADD_MATERIAL', payload: m });
+      });
+      navigate('/dialog?fromUpload=true');
+    }
   };
 
   const hasContent = materials.length > 0 || pendingText.trim().length > 0;
@@ -92,7 +120,7 @@ export default function UploadPage() {
     <div className={styles.container}>
       {/* 顶部栏 */}
       <div className={styles.topBar}>
-        <button className={styles.backButton} onClick={() => navigate('/dialog')}>
+        <button className={styles.backButton} onClick={handleGoBack}>
           ← 返回上一页
         </button>
         <h2 className={styles.pageTitle}>📎 素材粘贴板</h2>

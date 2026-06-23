@@ -142,7 +142,7 @@ export default function DialogPage() {
     <div className={styles.container}>
       {/* 顶部栏 */}
       <div className={styles.topBar}>
-        <button className={styles.backButton} onClick={() => navigate('/')}>
+        <button className={styles.backButton} onClick={() => navigate('/requirement-choice')}>
           ← 返回上一页
         </button>
         <h2 className={styles.pageTitle}>📋 需求搜集</h2>

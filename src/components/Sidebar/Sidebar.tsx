@@ -11,8 +11,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/', icon: '🔥', label: '热榜' },
-  { path: '/dialog', icon: '💬', label: '对话' },
-  { path: '/quick-requirement', icon: '⚡', label: '快速' },
+  { path: '/requirement-choice', icon: '📋', label: '需求' },
   { path: '/upload', icon: '📎', label: '素材' },
   { path: '/itinerary', icon: '🗺', label: '攻略' },
   { path: '/version', icon: '🕐', label: '版本' },

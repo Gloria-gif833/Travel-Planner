@@ -12,6 +12,7 @@ import {
   LoginPage,
   RegisterPage,
   QuickRequirementPage,
+  RequirementChoicePage,
 } from './pages';
 import AuthGuard from './components/AuthGuard/AuthGuard';
 
@@ -43,6 +44,7 @@ export default function Router() {
         {/* 主应用（有侧边栏，支持匿名访问） */}
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/requirement-choice" element={<RequirementChoicePage />} />
           <Route path="/dialog" element={<DialogPage />} />
           <Route path="/quick-requirement" element={<QuickRequirementPage />} />
           <Route path="/upload" element={<UploadPage />} />

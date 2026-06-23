@@ -9,3 +9,4 @@ export { default as SharedViewPage } from './SharedViewPage';
 export { default as LoginPage } from './LoginPage';
 export { default as RegisterPage } from './RegisterPage';
 export { default as QuickRequirementPage } from './QuickRequirementPage';
+export { default as RequirementChoicePage } from './RequirementChoicePage';

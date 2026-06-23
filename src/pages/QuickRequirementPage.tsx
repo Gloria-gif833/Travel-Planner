@@ -83,8 +83,8 @@ export default function QuickRequirementPage() {
   };
 
   const handleSelectDestination = (cityName: string) => {
-    quickReq.setField('destination', cityName);
-    setShowDestPicker(false);
+    quickReq.addDestination(cityName);
+    // 不关闭弹窗，让用户继续选更多
     setDestSearch('');
   };
 
@@ -112,8 +112,9 @@ export default function QuickRequirementPage() {
     }
     const prefText = allPrefs.length > 0 ? allPrefs.join('、') : '';
 
+    const destinationText = quickReq.state.destinations.join('、');
     const requirements: Requirements = {
-      destination: quickReq.state.destination,
+      destination: destinationText,
       departure: quickReq.state.departure,
       travelDate: quickReq.state.travelDate,
       days: quickReq.state.days,
@@ -125,7 +126,7 @@ export default function QuickRequirementPage() {
     };
 
     const items: string[] = [];
-    if (quickReq.state.destination) items.push(`📍 目的地：${quickReq.state.destination}`);
+    if (quickReq.state.destinations.length > 0) items.push(`📍 目的地：${destinationText}`);
     if (quickReq.state.departure) items.push(`🚗 出发地：${quickReq.state.departure}`);
     if (quickReq.state.travelDate) items.push(`📅 时间：${formatDate(quickReq.state.travelDate)}`);
     if (quickReq.state.days) items.push(`⏱ 天数：${quickReq.state.days}天`);
@@ -177,9 +178,10 @@ export default function QuickRequirementPage() {
     try {
       const { requirements } = buildRequirementsAndSummary();
 
+      const destText = quickReq.state.destinations.join('、');
       const convHistory = [
-        { role: 'user' as const, content: `我想去${quickReq.state.destination}旅行` },
-        { role: 'assistant' as const, content: `好的，我来为你规划${quickReq.state.destination}的行程。` },
+        { role: 'user' as const, content: `我想去${destText}旅行` },
+        { role: 'assistant' as const, content: `好的，我来为你规划${destText}的行程。` },
       ];
 
       const result = await generateItinerary(requirements, undefined, convHistory);
@@ -371,16 +373,36 @@ export default function QuickRequirementPage() {
                 </div>
               </div>
 
-              {/* 目的地 */}
+              {/* 目的地（多选） */}
               <div className={styles.fieldGroup}>
                 <label className={styles.fieldLabel}>🏁 目的地 <span className={styles.required}>*</span></label>
                 <div className={styles.citySelector}>
                   <div
-                    className={`${styles.cityInput} ${quickReq.state.destination ? styles.cityInputFilled : ''}`}
+                    className={`${styles.cityInput} ${quickReq.state.destinations.length > 0 ? styles.cityInputFilled : ''}`}
                     onClick={() => { setShowDestPicker(!showDestPicker); setShowDeparturePicker(false); }}
                   >
-                    {quickReq.state.destination || <span className={styles.placeholder}>请选择目的城市 ▼</span>}
+                    {quickReq.state.destinations.length > 0
+                      ? `已选 ${quickReq.state.destinations.length} 个城市`
+                      : <span className={styles.placeholder}>请选择目的城市（可多选）▼</span>}
                   </div>
+
+                  {/* 已选目的地标签 */}
+                  {quickReq.state.destinations.length > 0 && (
+                    <div className={styles.destTags}>
+                      {quickReq.state.destinations.map(city => (
+                        <span key={city} className={styles.destTag}>
+                          🏁 {city}
+                          <button
+                            className={styles.destTagRemove}
+                            onClick={(e) => { e.stopPropagation(); quickReq.removeDestination(city); }}
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      ))}
+                      <span className={styles.destAddHint}>点击输入框继续添加</span>
+                    </div>
+                  )}
 
                   {showDestPicker && (
                     <div className={styles.cityPicker}>
@@ -549,11 +571,11 @@ export default function QuickRequirementPage() {
                   🚗 {quickReq.state.departure}
                 </span>
               )}
-              {quickReq.state.destination && (
-                <span className={`${styles.reqTag} ${styles.reqTagHighlight}`}>
-                  🏁 {quickReq.state.destination}
+              {quickReq.state.destinations.map(city => (
+                <span key={city} className={`${styles.reqTag} ${styles.reqTagHighlight}`}>
+                  🏁 {city}
                 </span>
-              )}
+              ))}
               {quickReq.state.travelDate && (
                 <span className={styles.reqTag}>
                   📅 {formatDate(quickReq.state.travelDate)}
@@ -577,7 +599,7 @@ export default function QuickRequirementPage() {
                 </span>
               )}
             </div>
-            {!quickReq.state.destination && !quickReq.state.departure && !quickReq.state.days && (
+            {quickReq.state.destinations.length === 0 && !quickReq.state.departure && !quickReq.state.days && (
               <p className={styles.reqEmpty}>请填写左侧表单</p>
             )}
           </div>
@@ -586,7 +608,7 @@ export default function QuickRequirementPage() {
             <h4 className={styles.reqCardTitle}>📊 填写进度</h4>
             <div className={styles.progressBar}>
               {[
-                { key: 'destination', label: '目的地', filled: !!quickReq.state.destination },
+                { key: 'destination', label: '目的地', filled: quickReq.state.destinations.length > 0 },
                 { key: 'departure', label: '出发地', filled: !!quickReq.state.departure },
                 { key: 'travelDate', label: '日期', filled: !!quickReq.state.travelDate },
                 { key: 'days', label: '天数', filled: !!quickReq.state.days },
@@ -599,7 +621,7 @@ export default function QuickRequirementPage() {
               ))}
             </div>
             <p className={styles.progressHint}>
-              已完成 {[quickReq.state.destination, quickReq.state.departure, quickReq.state.travelDate, quickReq.state.days, (quickReq.state.preferences.length > 0 || !!quickReq.state.customPreference)].filter(Boolean).length}/5 项
+              已完成 {[quickReq.state.destinations.length > 0, quickReq.state.departure, quickReq.state.travelDate, quickReq.state.days, (quickReq.state.preferences.length > 0 || !!quickReq.state.customPreference)].filter(Boolean).length}/5 项
             </p>
           </div>
         </div>

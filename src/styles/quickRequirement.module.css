@@ -131,6 +131,56 @@
   color: var(--color-gray-300);
 }
 
+/* ---- 已选目的地标签 ---- */
+
+.destTags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) 0;
+}
+
+.destTag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-accent-50);
+  color: var(--color-accent-500);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.destTagRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-round);
+  font-size: 10px;
+  color: var(--color-accent-500);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: all var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+}
+
+.destTagRemove:hover {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.destAddHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-400);
+}
+
 .cityPicker {
   position: absolute;
   top: calc(100% + 4px);

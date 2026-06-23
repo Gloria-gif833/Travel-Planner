@@ -10,7 +10,8 @@ import type { Requirements } from '../types/conversation';
 
 export interface QuickRequirementState {
   departure: string;
-  destination: string;
+  /** 多目的地，用户可选择一个或多个城市 */
+  destinations: string[];
   travelDate: string;
   days: string;
   preferences: string[];
@@ -25,7 +26,7 @@ export type QuickRequirementStep =
 
 const INITIAL_STATE: QuickRequirementState = {
   departure: '',
-  destination: '',
+  destinations: [],
   travelDate: '',
   days: '',
   preferences: [],
@@ -53,6 +54,8 @@ export interface QuickRequirementActions {
   setField: (field: keyof QuickRequirementState, value: string) => void;
   togglePreference: (pref: string) => void;
   setCustomPreference: (value: string) => void;
+  addDestination: (city: string) => void;
+  removeDestination: (city: string) => void;
   reset: () => void;
   submit: () => Promise<boolean>;
   isSubmittable: boolean;
@@ -87,13 +90,27 @@ export function useQuickRequirement(
     setState(prev => ({ ...prev, customPreference: value }));
   }, []);
 
+  const addDestination = useCallback((city: string) => {
+    setState(prev => {
+      if (prev.destinations.includes(city)) return prev;
+      return { ...prev, destinations: [...prev.destinations, city] };
+    });
+  }, []);
+
+  const removeDestination = useCallback((city: string) => {
+    setState(prev => ({
+      ...prev,
+      destinations: prev.destinations.filter(d => d !== city),
+    }));
+  }, []);
+
   const reset = useCallback(() => {
     setState(INITIAL_STATE);
     setStep('form');
     setSummaryMessage('');
   }, []);
 
-  const isSubmittable = state.destination.trim() !== '' && state.days !== '';
+  const isSubmittable = state.destinations.length > 0 && state.days !== '';
 
   const submit = useCallback(async (): Promise<boolean> => {
     if (!isSubmittable) return false;
@@ -107,7 +124,7 @@ export function useQuickRequirement(
 
     // 2. 构建需求摘要消息
     const items: string[] = [];
-    if (state.destination) items.push(`📍 目的地：${state.destination}`);
+    if (state.destinations.length > 0) items.push(`📍 目的地：${state.destinations.join('、')}`);
     if (state.departure) items.push(`🚗 出发地：${state.departure}`);
     if (state.travelDate) items.push(`📅 时间：${state.travelDate}`);
     if (state.days) items.push(`⏱ 天数：${state.days}天`);
@@ -123,8 +140,9 @@ export function useQuickRequirement(
     setStep('confirming');
 
     // 3. 保存到 ConversationContext（方便后续流程使用）
+    const destinationText = state.destinations.join('、');
     const requirements: Requirements = {
-      destination: state.destination,
+      destination: destinationText,
       departure: state.departure,
       travelDate: state.travelDate,
       days: state.days,
@@ -149,6 +167,8 @@ export function useQuickRequirement(
     setField,
     togglePreference,
     setCustomPreference,
+    addDestination,
+    removeDestination,
     reset,
     submit,
     isSubmittable,

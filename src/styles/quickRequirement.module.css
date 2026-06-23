@@ -131,7 +131,7 @@
   color: var(--color-gray-300);
 }
 
-/* ---- 已选目的地标签 ---- */
+/* ---- 已选目的地标签（带排序） ---- */
 
 .destTags {
   display: flex;
@@ -145,13 +145,52 @@
 .destTag {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
+  gap: 2px;
+  padding: 2px var(--space-sm);
   background: var(--color-accent-50);
   color: var(--color-accent-500);
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
+}
+
+.destTagOrder {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  margin-right: 2px;
+}
+
+.destTagUp,
+.destTagDown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: var(--color-accent-500);
+  font-size: 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.destTagUp:hover:not(:disabled),
+.destTagDown:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: var(--color-white);
+  opacity: 1;
+}
+
+.destTagUp:disabled,
+.destTagDown:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
 }
 
 .destTagRemove {
@@ -161,7 +200,7 @@
   width: 16px;
   height: 16px;
   border-radius: var(--radius-round);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--color-accent-500);
   cursor: pointer;
   border: none;
@@ -169,16 +208,19 @@
   transition: all var(--transition-fast);
   padding: 0;
   line-height: 1;
+  opacity: 0.6;
 }
 
 .destTagRemove:hover {
   background: var(--color-accent);
   color: var(--color-white);
+  opacity: 1;
 }
 
 .destAddHint {
   font-size: var(--font-size-xs);
   color: var(--color-gray-400);
+  white-space: nowrap;
 }
 
 .cityPicker {

@@ -112,7 +112,7 @@ export default function QuickRequirementPage() {
     }
     const prefText = allPrefs.length > 0 ? allPrefs.join('、') : '';
 
-    const destinationText = quickReq.state.destinations.join('、');
+    const destinationText = quickReq.state.destinations.join('→');
     const requirements: Requirements = {
       destination: destinationText,
       departure: quickReq.state.departure,
@@ -386,12 +386,25 @@ export default function QuickRequirementPage() {
                       : <span className={styles.placeholder}>请选择目的城市（可多选）▼</span>}
                   </div>
 
-                  {/* 已选目的地标签 */}
+                  {/* 已选目的地标签（带排序） */}
                   {quickReq.state.destinations.length > 0 && (
                     <div className={styles.destTags}>
-                      {quickReq.state.destinations.map(city => (
+                      {quickReq.state.destinations.map((city, idx) => (
                         <span key={city} className={styles.destTag}>
+                          <span className={styles.destTagOrder}>{idx + 1}.</span>
                           🏁 {city}
+                          <button
+                            className={styles.destTagUp}
+                            onClick={(e) => { e.stopPropagation(); quickReq.moveDestination(idx, idx - 1); }}
+                            disabled={idx === 0}
+                            title="上移"
+                          >▲</button>
+                          <button
+                            className={styles.destTagDown}
+                            onClick={(e) => { e.stopPropagation(); quickReq.moveDestination(idx, idx + 1); }}
+                            disabled={idx === quickReq.state.destinations.length - 1}
+                            title="下移"
+                          >▼</button>
                           <button
                             className={styles.destTagRemove}
                             onClick={(e) => { e.stopPropagation(); quickReq.removeDestination(city); }}
@@ -400,7 +413,7 @@ export default function QuickRequirementPage() {
                           </button>
                         </span>
                       ))}
-                      <span className={styles.destAddHint}>点击输入框继续添加</span>
+                      <span className={styles.destAddHint}>点击输入框继续添加 · 用 ▲▼ 调顺序</span>
                     </div>
                   )}
 
@@ -571,9 +584,9 @@ export default function QuickRequirementPage() {
                   🚗 {quickReq.state.departure}
                 </span>
               )}
-              {quickReq.state.destinations.map(city => (
+              {quickReq.state.destinations.map((city, idx) => (
                 <span key={city} className={`${styles.reqTag} ${styles.reqTagHighlight}`}>
-                  🏁 {city}
+                  {idx + 1}. 🏁 {city}
                 </span>
               ))}
               {quickReq.state.travelDate && (

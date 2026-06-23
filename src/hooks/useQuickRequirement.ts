@@ -56,6 +56,7 @@ export interface QuickRequirementActions {
   setCustomPreference: (value: string) => void;
   addDestination: (city: string) => void;
   removeDestination: (city: string) => void;
+  moveDestination: (fromIndex: number, toIndex: number) => void;
   reset: () => void;
   submit: () => Promise<boolean>;
   isSubmittable: boolean;
@@ -104,6 +105,16 @@ export function useQuickRequirement(
     }));
   }, []);
 
+  const moveDestination = useCallback((fromIndex: number, toIndex: number) => {
+    setState(prev => {
+      const dests = [...prev.destinations];
+      if (fromIndex < 0 || fromIndex >= dests.length || toIndex < 0 || toIndex >= dests.length) return prev;
+      const [moved] = dests.splice(fromIndex, 1);
+      dests.splice(toIndex, 0, moved);
+      return { ...prev, destinations: dests };
+    });
+  }, []);
+
   const reset = useCallback(() => {
     setState(INITIAL_STATE);
     setStep('form');
@@ -124,7 +135,7 @@ export function useQuickRequirement(
 
     // 2. 构建需求摘要消息
     const items: string[] = [];
-    if (state.destinations.length > 0) items.push(`📍 目的地：${state.destinations.join('、')}`);
+    if (state.destinations.length > 0) items.push(`📍 目的地：${state.destinations.join(' → ')}`);
     if (state.departure) items.push(`🚗 出发地：${state.departure}`);
     if (state.travelDate) items.push(`📅 时间：${state.travelDate}`);
     if (state.days) items.push(`⏱ 天数：${state.days}天`);
@@ -140,7 +151,8 @@ export function useQuickRequirement(
     setStep('confirming');
 
     // 3. 保存到 ConversationContext（方便后续流程使用）
-    const destinationText = state.destinations.join('、');
+    // 使用箭头 → 分隔多个目的地，保留用户指定的顺序
+    const destinationText = state.destinations.join('→');
     const requirements: Requirements = {
       destination: destinationText,
       departure: state.departure,
@@ -169,6 +181,7 @@ export function useQuickRequirement(
     setCustomPreference,
     addDestination,
     removeDestination,
+    moveDestination,
     reset,
     submit,
     isSubmittable,

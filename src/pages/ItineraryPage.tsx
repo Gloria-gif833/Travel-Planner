@@ -9,7 +9,7 @@ import DaySection from '../components/DaySection/DaySection';
 import InfoPanel from '../components/InfoPanel/InfoPanel';
 import NoticeBox from '../components/NoticeBox/NoticeBox';
 import SpotEditModal from '../components/SpotEditModal/SpotEditModal';
-import AiAdjustPanel from '../components/AiAdjustPanel/AiAdjustPanel';
+import AiAdjustDrawer from '../components/AiAdjustPanel/AiAdjustDrawer';
 import VersionHistoryModal from '../components/VersionHistoryModal/VersionHistoryModal';
 import EmptyGuideModal from '../components/EmptyGuideModal/EmptyGuideModal';
 import { DragProvider } from '../components/DaySection/DragContext';
@@ -27,6 +27,8 @@ export default function ItineraryPage() {
 
   // 版本历史弹窗
   const [versionModalOpen, setVersionModalOpen] = useState(false);
+  // AI调整抽屉
+  const [aiDrawerOpen, setAiDrawerOpen] = useState(false);
   const { createSnapshot } = useVersionHistory();
   const prevItineraryRef = useRef<string>('');
   const [pendingAdd, setPendingAdd] = useState<{ dayIndex: number; slotIndex: number } | null>(null);
@@ -242,7 +244,6 @@ export default function ItineraryPage() {
 
           {/* 右侧：实用信息 */}
           <div className={styles.sidePanel}>
-            <AiAdjustPanel />
             <InfoPanel
               info={itinerary!.practicalInfo}
               onUpdate={(field, value, userNote) =>
@@ -252,6 +253,22 @@ export default function ItineraryPage() {
             <NoticeBox notices={itinerary!.notices} />
           </div>
         </div>
+
+        {/* AI 调整浮动按钮 */}
+        <button
+          className={styles.aiFab}
+          onClick={() => setAiDrawerOpen(true)}
+          title="AI 攻略调整"
+        >
+          <span className={styles.aiFabIcon}>💬</span>
+          <span className={styles.aiFabLabel}>AI调整</span>
+        </button>
+
+        {/* AI 调整侧滑面板 */}
+        <AiAdjustDrawer
+          open={aiDrawerOpen}
+          onClose={() => setAiDrawerOpen(false)}
+        />
 
         {/* 景点编辑弹窗 */}
         <SpotEditModal

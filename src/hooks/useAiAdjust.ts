@@ -2,16 +2,21 @@ import { useCallback, useEffect } from 'react';
 import { useAiAdjustContext, generateMsgId } from '../context/AiAdjustContext';
 import { useItinerary } from '../context/ItineraryContext';
 import { adjustItinerary } from '../services/adjustService';
+import { extractIntent, buildItinerarySummary } from '../services/intentService';
+import { ItineraryMutator } from './ItineraryMutator';
+import { useVersionHistory } from './useVersionHistory';
 import type { Message } from '../types/conversation';
 import type { ItineraryData } from '../types/itinerary';
 
 /* ========================================
-   useAiAdjust Hook — AI 调整逻辑（API + Mock 降级）
+   useAiAdjust Hook — AI 调整逻辑
+   优先调后端 API，失败则走意图提取 + 本地执行
    ======================================== */
 
 export function useAiAdjust() {
   const { state: adjustState, dispatch: adjustDispatch } = useAiAdjustContext();
   const { state: itineraryState, dispatch: itineraryDispatch } = useItinerary();
+  const { createSnapshot } = useVersionHistory();
 
   const itinerary = itineraryState.current;
 
@@ -23,7 +28,7 @@ export function useAiAdjust() {
       const greeting: Message = {
         id: generateMsgId(),
         role: 'ai',
-        text: '你对这份攻略满意吗？有什么需要修改的地方可以发送给我哦~ 💬\n\n比如：\n• "第三天下午想去博物馆"\n• "把宽窄巷子的时间延长"\n• "删除第一天的锦里"',
+        text: '你对这份攻略满意吗？有什么需要修改的地方可以发送给我哦~ 💬\n\n比如：\n• "第二天和第四天交换一下"\n• "把宽窄巷子挪到第三天"\n• "删除第一天的锦里"\n• "把第三天的游玩时长改成2小时"',
         timestamp: Date.now(),
       };
       adjustDispatch({ type: 'ADD_MESSAGE', payload: greeting });
@@ -31,7 +36,7 @@ export function useAiAdjust() {
   }, []);
 
   /**
-   * 发送调整消息 — 先尝试 API，失败则 Mock
+   * 发送调整消息
    */
   const sendMessage = useCallback(
     async (text: string) => {
@@ -48,93 +53,88 @@ export function useAiAdjust() {
       adjustDispatch({ type: 'SET_PROCESSING', payload: true });
 
       try {
-        // 尝试调用真实 API
+        // 策略1: 尝试调用后端完整调整 API
         const result = await adjustItinerary(itinerary, text.trim());
 
         if (result.itinerary) {
-          // 保留原有 metadata，AI 调整不会改变用户需求元数据
           const enriched = {
             ...(result.itinerary as ItineraryData),
             metadata: itinerary.metadata,
           };
+          itineraryDispatch({ type: 'SET_ITINERARY', payload: enriched });
+          createSnapshot('ai_adjust', `AI 整体调整: ${text.slice(0, 30)}`);
+
+          const aiMsg: Message = {
+            id: generateMsgId(),
+            role: 'ai',
+            text: '✅ 已根据你的反馈调整了攻略内容，请查看左侧更新 👀',
+            timestamp: Date.now(),
+          };
+          adjustDispatch({ type: 'ADD_MESSAGE', payload: aiMsg });
+          adjustDispatch({ type: 'SET_PROCESSING', payload: false });
+          return;
+        }
+      } catch {
+        // 后端 API 不可用，继续下一步
+      }
+
+      try {
+        // 策略2: 意图提取 + 本地执行
+        const summary = buildItinerarySummary(itinerary);
+        const instruction = await extractIntent(text.trim(), summary);
+
+        if (instruction.intent === 'unknown' || (instruction.confidence ?? 0) < 0.5) {
+          const failMsg: Message = {
+            id: generateMsgId(),
+            role: 'ai',
+            text: '😅 抱歉，我没能理解你的调整需求，可以换个说法试试吗？\n\n支持的调整方式：\n• 交换天数："第二天和第四天换一下"\n• 移动景点："把宽窄巷子挪到第三天"\n• 删除景点："删除第一天的锦里"\n• 删除天数："删除第五天"\n• 修改信息："把宽窄巷子的时长改成2小时"',
+            timestamp: Date.now(),
+          };
+          adjustDispatch({ type: 'ADD_MESSAGE', payload: failMsg });
+          adjustDispatch({ type: 'SET_PROCESSING', payload: false });
+          return;
+        }
+
+        // 执行数据操作
+        const mutationResult = ItineraryMutator.apply(instruction, itinerary);
+
+        if (mutationResult.success) {
           itineraryDispatch({
             type: 'SET_ITINERARY',
-            payload: enriched,
+            payload: mutationResult.itinerary,
           });
-        }
+          createSnapshot('ai_adjust', instruction.summary || text.slice(0, 30));
 
-        const aiMsg: Message = {
+          const successMsg: Message = {
+            id: generateMsgId(),
+            role: 'ai',
+            text: `✅ ${mutationResult.message}，请查看左侧更新 👀`,
+            timestamp: Date.now(),
+          };
+          adjustDispatch({ type: 'ADD_MESSAGE', payload: successMsg });
+        } else {
+          const failMsg: Message = {
+            id: generateMsgId(),
+            role: 'ai',
+            text: `😅 ${mutationResult.message}，请换个说法试试~`,
+            timestamp: Date.now(),
+          };
+          adjustDispatch({ type: 'ADD_MESSAGE', payload: failMsg });
+        }
+      } catch (err) {
+        console.error('【AI 调整失败】', err);
+        const errorMsg: Message = {
           id: generateMsgId(),
           role: 'ai',
-          text: '已根据你的反馈调整了攻略内容，请查看左侧更新 👀',
+          text: '😅 调整过程出现错误，请稍后重试~',
           timestamp: Date.now(),
         };
-        adjustDispatch({ type: 'ADD_MESSAGE', payload: aiMsg });
-      } catch {
-        // API 不可用，走 Mock 逻辑
-        const mockResponse = mockAdjust(text, itinerary);
-        const { reply, adjustments } = mockResponse;
-
-        // 应用调整
-        for (const adj of adjustments) {
-          const { dayIndex, slotIndex, action, data, spotIndex } = adj;
-          const day = itinerary.days[dayIndex];
-          if (!day) continue;
-          const slot = day.slots[slotIndex];
-          if (!slot) continue;
-
-          switch (action) {
-            case 'add': {
-              if (data) {
-                itineraryDispatch({
-                  type: 'ADD_SPOT',
-                  payload: { dayIndex, slotIndex, spot: data as any, insertAfter: slot.spots.length - 1 },
-                });
-              }
-              break;
-            }
-            case 'delete': {
-              if (spotIndex !== undefined) {
-                itineraryDispatch({
-                  type: 'DELETE_SPOT',
-                  payload: { dayIndex, slotIndex, spotIndex },
-                });
-              }
-              break;
-            }
-            case 'modify': {
-              if (data?.name) {
-                const idx = slot.spots.findIndex((s) => s.name === data.name);
-                if (idx >= 0) {
-                  itineraryDispatch({
-                    type: 'UPDATE_SPOT',
-                    payload: { dayIndex, slotIndex, spotIndex: idx, spot: { ...slot.spots[idx], ...data } as any },
-                  });
-                }
-              } else if (data && slot.spots.length > 0) {
-                const lastIdx = slot.spots.length - 1;
-                itineraryDispatch({
-                  type: 'UPDATE_SPOT',
-                  payload: { dayIndex, slotIndex, spotIndex: lastIdx, spot: { ...slot.spots[lastIdx], ...data } as any },
-                });
-              }
-              break;
-            }
-          }
-        }
-
-        const aiMsg: Message = {
-          id: generateMsgId(),
-          role: 'ai',
-          text: reply,
-          timestamp: Date.now(),
-        };
-        adjustDispatch({ type: 'ADD_MESSAGE', payload: aiMsg });
+        adjustDispatch({ type: 'ADD_MESSAGE', payload: errorMsg });
       } finally {
         adjustDispatch({ type: 'SET_PROCESSING', payload: false });
       }
     },
-    [itinerary, adjustState.isProcessing, adjustDispatch, itineraryDispatch]
+    [itinerary, adjustState.isProcessing, adjustDispatch, itineraryDispatch, createSnapshot]
   );
 
   return {
@@ -142,77 +142,4 @@ export function useAiAdjust() {
     isProcessing: adjustState.isProcessing,
     sendMessage,
   };
-}
-
-/**
- * Mock 调整逻辑（API 不可用时降级）
- */
-function mockAdjust(input: string, itinerary: any) {
-  const inputLower = input.toLowerCase();
-
-  let dayIndex = 0;
-  const dayPatterns = [
-    { keywords: ['第一天', 'day 1', 'day1'], idx: 0 },
-    { keywords: ['第二天', 'day 2', 'day2'], idx: 1 },
-    { keywords: ['第三天', 'day 3', 'day3'], idx: 2 },
-    { keywords: ['第四天', 'day 4', 'day4'], idx: 3 },
-    { keywords: ['第五天', 'day 5', 'day5'], idx: 4 },
-  ];
-  for (const p of dayPatterns) {
-    if (p.keywords.some((k) => inputLower.includes(k))) {
-      dayIndex = p.idx;
-      break;
-    }
-  }
-
-  let slotKeyword = '';
-  if (inputLower.includes('上午') || inputLower.includes('早上')) slotKeyword = '上午';
-  else if (inputLower.includes('下午')) slotKeyword = '下午';
-  else if (inputLower.includes('晚上') || inputLower.includes('夜')) slotKeyword = '晚上';
-
-  const slotIndex = ['上午', '下午', '晚上'].indexOf(slotKeyword);
-  const targetSlotIdx = slotIndex >= 0 ? slotIndex : 1;
-
-  const adjustments: any[] = [];
-
-  if (inputLower.includes('添加') || inputLower.includes('增加') || inputLower.includes('想去')) {
-    let newName = '新景点';
-    for (const prefix of ['添加', '增加', '想去']) {
-      if (inputLower.includes(prefix)) {
-        const idx = inputLower.indexOf(prefix) + prefix.length;
-        const rest = inputLower.slice(idx).trim();
-        const match = rest.match(/^(.+?)(?:的|景点|地方|。|$)/);
-        if (match && match[1].length > 0 && match[1].length < 15) newName = match[1];
-        break;
-      }
-    }
-    adjustments.push({
-      dayIndex,
-      slotIndex: targetSlotIdx,
-      action: 'add',
-      data: {
-        name: newName,
-        description: `根据你的需求添加的景点「${newName}」，是当地非常受欢迎的地方。`,
-        duration: '2小时',
-        transport: { mode: '步行', duration: '10分钟' },
-        tags: ['推荐'],
-      },
-    });
-    return { reply: `好的！已为你将「${newName}」添加到行程中 👀`, adjustments };
-  }
-
-  if (inputLower.includes('删除') || inputLower.includes('去掉')) {
-    const spotNames = itinerary?.days[dayIndex]?.slots.flatMap((s: any) => s.spots).map((s: any) => s.name) ?? [];
-    for (const name of spotNames) {
-      if (inputLower.includes(name)) {
-        const spots = itinerary.days[dayIndex].slots.flatMap((s: any) => s.spots);
-        const spotIdx = spots.findIndex((s: any) => s.name === name);
-        adjustments.push({ dayIndex, slotIndex: targetSlotIdx, spotIndex: spotIdx, action: 'delete' });
-        return { reply: `已移除「${name}」🗑️`, adjustments };
-      }
-    }
-  }
-
-  adjustments.push({ dayIndex, slotIndex: targetSlotIdx, action: 'modify', data: { description: '已根据你的需求优化了游玩建议。' } });
-  return { reply: '好的，已根据你的反馈优化了攻略内容 ✅', adjustments };
 }

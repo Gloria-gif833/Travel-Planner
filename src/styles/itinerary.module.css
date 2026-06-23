@@ -266,6 +266,62 @@
   }
 }
 
+/* ---- AI 调整浮动按钮 ---- */
+
+.aiFab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  z-index: 300;
+  transition: all var(--transition-normal);
+  font-size: var(--font-size-md);
+}
+
+.aiFab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 168, 83, 0.35);
+  background: var(--color-accent-hover);
+}
+
+.aiFab:active {
+  transform: translateY(0);
+}
+
+.aiFabIcon {
+  font-size: 20px;
+}
+
+.aiFabLabel {
+  font-weight: var(--font-weight-medium);
+}
+
+/* 小屏适配 */
+@media (max-width: 768px) {
+  .aiFab {
+    bottom: 20px;
+    right: 20px;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .aiFabLabel {
+    display: none;
+  }
+
+  .aiFabIcon {
+    font-size: 24px;
+  }
+}
+
 /* ========================================
    Responsive — 多级断点适配
    ======================================== */

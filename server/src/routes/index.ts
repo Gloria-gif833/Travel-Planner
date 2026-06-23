@@ -4,6 +4,7 @@ import type { HealthCheckResponse } from '../types';
 import chatRouter from './chat';
 import generateRouter from './generate';
 import adjustRouter from './adjust';
+import intentRouter from './intent';
 import authRouter from './auth';
 import itinerariesRouter from './itineraries';
 import materialsRouter from './materials';
@@ -28,6 +29,7 @@ router.use('/auth', authRouter);
 router.use('/chat', chatRouter);
 router.use('/generate', generateRouter);
 router.use('/adjust', adjustRouter);
+router.use('/intent', intentRouter);
 
 // 攻略 CRUD
 router.use('/itineraries', itinerariesRouter);

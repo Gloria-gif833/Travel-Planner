@@ -15,6 +15,7 @@ import EmptyGuideModal from '../components/EmptyGuideModal/EmptyGuideModal';
 import { DragProvider } from '../components/DaySection/DragContext';
 import type { Spot } from '../types/itinerary';
 import { diffItinerary } from '../utils/diffItinerary';
+import { skipNextSnapshot, checkAndResetSnapshotSkip } from '../hooks/useAiAdjust';
 import styles from '../styles/itinerary.module.css';
 
 export default function ItineraryPage() {
@@ -38,8 +39,16 @@ export default function ItineraryPage() {
   const isLoading = state.loading;
 
   // 当攻略数据变化时自动生成版本快照（使用 diff 工具生成可读摘要）
+  // 注意：AI调整等外部操作会主动设置 _skipNextSnapshot 跳过此处的重复创建
   useEffect(() => {
     if (!itinerary) return;
+
+    // AI调整等主动创建版本的操作会设置防重标记，跳过此处
+    if (checkAndResetSnapshotSkip()) {
+      prevItineraryRef.current = JSON.stringify({ days: itinerary.days, practicalInfo: itinerary.practicalInfo });
+      return;
+    }
+
     const currentJson = JSON.stringify({ days: itinerary.days, practicalInfo: itinerary.practicalInfo });
     if (prevItineraryRef.current && prevItineraryRef.current !== currentJson) {
       try {

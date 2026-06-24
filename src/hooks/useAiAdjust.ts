@@ -13,6 +13,24 @@ import type { Message } from '../types/conversation';
 import type { ItineraryData } from '../types/itinerary';
 
 /**
+ * 版本快照防重复标记
+ * AI调整 dispatch 前设置此标记，ItineraryPage 的 useEffect 跳过重复创建
+ */
+let _skipSnapshot = false;
+
+export function skipNextSnapshot() {
+  _skipSnapshot = true;
+}
+
+export function checkAndResetSnapshotSkip(): boolean {
+  if (_skipSnapshot) {
+    _skipSnapshot = false;
+    return true;
+  }
+  return false;
+}
+
+/**
  * 校验攻略数据是否有效（有真实景点，不是"景点待定"空壳）
  */
 function isValidItinerary(data: any): boolean {
@@ -100,7 +118,10 @@ export function useAiAdjust() {
             return;
           }
 
-          itineraryDispatch({
+          // 设置防重标记，防止 ItineraryPage 的 useEffect 再创建一次版本
+	          skipNextSnapshot();
+
+	          itineraryDispatch({
             type: 'SET_ITINERARY',
             payload: mutationResult.itinerary,
           });

@@ -63,7 +63,27 @@ function extractJson(raw: string): string {
 }
 
 /**
+ * 校验攻略数据是否有效（有真实景点，不是空壳）
+ */
+function validateItinerary(parsed: any): boolean {
+  if (!parsed.days?.length) return false;
+  for (const day of parsed.days) {
+    if (!day.slots?.length) continue;
+    for (const slot of day.slots) {
+      if (!slot.spots?.length) continue;
+      for (const spot of slot.spots) {
+        if (spot.name && spot.name !== '景点待定' && spot.name !== '未命名景点') {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+/**
  * 解析并校验 AI 返回的攻略 JSON
+ * 解析失败或数据无效时抛 Error，不再静默返回默认空壳
  */
 export function parseItinerary(raw: string): ParsedItinerary {
   const jsonStr = extractJson(raw);
@@ -73,8 +93,7 @@ export function parseItinerary(raw: string): ParsedItinerary {
     parsed = JSON.parse(jsonStr);
   } catch (err) {
     logger.error(`攻略 JSON 解析失败: ${(err as Error).message}`);
-    // 返回一个默认攻略结构以便前端不崩溃
-    return getDefaultItinerary();
+    throw new Error('攻略 JSON 解析失败，AI 返回了无效数据');
   }
 
   // 校验基本结构
@@ -82,6 +101,12 @@ export function parseItinerary(raw: string): ParsedItinerary {
   const days = Array.isArray(parsed.days) ? parsed.days : [];
   const practicalInfo = parsed.practicalInfo || {};
   const notices = Array.isArray(parsed.notices) ? parsed.notices : [];
+
+  // 提前校验：如果没有任何真实景点数据，直接报错
+  if (!validateItinerary(parsed)) {
+    logger.error('攻略数据校验失败：所有景点均为空值或景点待定');
+    throw new Error('AI 返回的攻略数据无效，请重试');
+  }
 
   const validatedDays: ParsedDay[] = days.map((day: any, di: number) => {
     const slots = Array.isArray(day.slots) ? day.slots : [];

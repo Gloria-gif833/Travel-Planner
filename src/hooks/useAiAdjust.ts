@@ -1,17 +1,30 @@
+/* ========================================
+   useAiAdjust Hook — AI 调整逻辑
+   只走意图提取 + 本地执行，不调用完整重生成
+   ======================================== */
+
 import { useCallback, useEffect } from 'react';
 import { useAiAdjustContext, generateMsgId } from '../context/AiAdjustContext';
 import { useItinerary } from '../context/ItineraryContext';
-import { adjustItinerary } from '../services/adjustService';
 import { extractIntent, buildItinerarySummary } from '../services/intentService';
 import { ItineraryMutator } from './ItineraryMutator';
 import { useVersionHistory } from './useVersionHistory';
 import type { Message } from '../types/conversation';
 import type { ItineraryData } from '../types/itinerary';
 
-/* ========================================
-   useAiAdjust Hook — AI 调整逻辑
-   优先调后端 API，失败则走意图提取 + 本地执行
-   ======================================== */
+/**
+ * 校验攻略数据是否有效（有真实景点，不是"景点待定"空壳）
+ */
+function isValidItinerary(data: any): boolean {
+  if (!data?.days?.length) return false;
+  return data.days.some((d: any) =>
+    d.slots?.some((s: any) =>
+      s.spots?.some((sp: any) =>
+        sp.name && sp.name !== '景点待定' && sp.name !== '未命名景点'
+      )
+    )
+  );
+}
 
 export function useAiAdjust() {
   const { state: adjustState, dispatch: adjustDispatch } = useAiAdjustContext();
@@ -37,6 +50,7 @@ export function useAiAdjust() {
 
   /**
    * 发送调整消息
+   * 只走意图提取 + 本地执行，确保攻略不被 AI 返回的垃圾数据覆盖
    */
   const sendMessage = useCallback(
     async (text: string) => {
@@ -53,33 +67,7 @@ export function useAiAdjust() {
       adjustDispatch({ type: 'SET_PROCESSING', payload: true });
 
       try {
-        // 策略1: 尝试调用后端完整调整 API
-        const result = await adjustItinerary(itinerary, text.trim());
-
-        if (result.itinerary) {
-          const enriched = {
-            ...(result.itinerary as ItineraryData),
-            metadata: itinerary.metadata,
-          };
-          itineraryDispatch({ type: 'SET_ITINERARY', payload: enriched });
-          createSnapshot('ai_adjust', `AI 整体调整: ${text.slice(0, 30)}`);
-
-          const aiMsg: Message = {
-            id: generateMsgId(),
-            role: 'ai',
-            text: '✅ 已根据你的反馈调整了攻略内容，请查看左侧更新 👀',
-            timestamp: Date.now(),
-          };
-          adjustDispatch({ type: 'ADD_MESSAGE', payload: aiMsg });
-          adjustDispatch({ type: 'SET_PROCESSING', payload: false });
-          return;
-        }
-      } catch {
-        // 后端 API 不可用，继续下一步
-      }
-
-      try {
-        // 策略2: 意图提取 + 本地执行
+        // 意图提取 + 本地执行（唯一路径，不调完整重生成 API）
         const summary = buildItinerarySummary(itinerary);
         const instruction = await extractIntent(text.trim(), summary);
 
@@ -99,6 +87,19 @@ export function useAiAdjust() {
         const mutationResult = ItineraryMutator.apply(instruction, itinerary);
 
         if (mutationResult.success) {
+          // 校验修改后的数据是否有效
+          if (!isValidItinerary(mutationResult.itinerary)) {
+            const errMsg: Message = {
+              id: generateMsgId(),
+              role: 'ai',
+              text: '😅 调整过程中遇到了问题，攻略数据已自动恢复，请换个说法试试~',
+              timestamp: Date.now(),
+            };
+            adjustDispatch({ type: 'ADD_MESSAGE', payload: errMsg });
+            adjustDispatch({ type: 'SET_PROCESSING', payload: false });
+            return;
+          }
+
           itineraryDispatch({
             type: 'SET_ITINERARY',
             payload: mutationResult.itinerary,
